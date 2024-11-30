@@ -1,4 +1,4 @@
-package com.serhiiromanchuk.mastermeme
+package com.serhiiromanchuk.mastermeme.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -12,13 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.serhiiromanchuk.mastermeme.ui.theme.MasterMemeTheme
+import com.serhiiromanchuk.mastermeme.presentation.theme.MasterMemeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         installSplashScreen()
+        enableEdgeToEdge()
         setContent {
             MasterMemeTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
