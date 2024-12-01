@@ -15,6 +15,13 @@ class HomeViewModel @Inject constructor() : BaseHomeViewModel() {
         get() = HomeUiState()
 
     override fun onEvent(event: HomeUiEvent) {
-        TODO("Not yet implemented")
+        when (event) {
+            HomeUiEvent.FabClicked -> updateBottomSheetState(true)
+            HomeUiEvent.BottomSheetDismissed -> updateBottomSheetState(false)
+        }
+    }
+
+    private fun updateBottomSheetState(openBottomSheet: Boolean) {
+        updateState { it.copy(bottomSheetOpened = openBottomSheet) }
     }
 }
