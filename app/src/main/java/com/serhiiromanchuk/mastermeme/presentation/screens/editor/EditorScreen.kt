@@ -36,5 +36,4 @@ private fun EditorScreen(
     uiState: EditorUiState,
     onEvent: (EditorUiEvent) -> Unit
 ) {
-
 }

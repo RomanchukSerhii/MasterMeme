@@ -47,8 +47,7 @@ val Typography = Typography(
         fontFamily = Manrope,
         fontWeight = FontWeight.Bold,
         fontSize = 14.sp,
-        lineHeight = 24.sp,
-        color = MasterMemeLightGray
+        lineHeight = 24.sp
     ),
     bodyLarge = TextStyle(
         fontFamily = Manrope,
