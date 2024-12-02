@@ -4,4 +4,6 @@
     <string name="new_meme_button">Create new meme button</string>
     <string name="choose_template">Choose template</string>
     <string name="choose_template_description">Choose template for your next meme masterpiece</string>
+    <string name="back_to_main_screen">Back to main screen</string>
+    <string name="new_meme">New meme</string>
 </resources>

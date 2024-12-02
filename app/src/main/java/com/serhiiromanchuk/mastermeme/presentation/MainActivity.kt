@@ -9,7 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.HomeScreenRoot
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.EditorScreenRoot
 import com.serhiiromanchuk.mastermeme.presentation.theme.MasterMemeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.surfaceVariant
                 ) {
-                    HomeScreenRoot()
+                    EditorScreenRoot()
                 }
             }
         }

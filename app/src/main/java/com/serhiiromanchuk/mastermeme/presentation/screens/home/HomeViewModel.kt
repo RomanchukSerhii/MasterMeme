@@ -7,7 +7,7 @@ import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
-typealias BaseHomeViewModel = BaseViewModel<HomeUiState, HomeUiEvent, HomeActionEvent>
+private typealias BaseHomeViewModel = BaseViewModel<HomeUiState, HomeUiEvent, HomeActionEvent>
 
 @HiltViewModel
 class HomeViewModel @Inject constructor() : BaseHomeViewModel() {
