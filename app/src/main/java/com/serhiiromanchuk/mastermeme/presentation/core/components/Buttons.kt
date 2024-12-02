@@ -3,6 +3,7 @@ package com.serhiiromanchuk.mastermeme.presentation.core.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -52,7 +53,8 @@ fun PrimaryButton(
             .background(
                 brush = GradientScheme.PrimaryGradient,
                 shape = RoundedCornerShape(8.dp)
-            ),
+            )
+            .height(40.dp),
         onClick = onClick,
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
@@ -81,7 +83,8 @@ fun OutlinedButton(
                 width = 1.dp,
                 brush = GradientScheme.PrimaryGradient,
                 shape = RoundedCornerShape(8.dp)
-            ),
+            )
+            .height(40.dp),
         onClick = onClick,
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),

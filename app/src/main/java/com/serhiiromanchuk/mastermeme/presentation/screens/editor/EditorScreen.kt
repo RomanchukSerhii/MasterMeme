@@ -7,6 +7,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseContentLayout
 import com.serhiiromanchuk.mastermeme.presentation.core.components.MemeTopBar
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditorBottomBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiState
 
@@ -21,6 +22,11 @@ fun EditorScreenRoot(modifier: Modifier = Modifier) {
             MemeTopBar(
                 title = stringResource(R.string.new_meme),
                 onBackClick = {}
+            )
+        },
+        bottomBar = {
+            EditorBottomBar(
+                onEvent = viewModel::onEvent
             )
         }
     ) { uiState ->
