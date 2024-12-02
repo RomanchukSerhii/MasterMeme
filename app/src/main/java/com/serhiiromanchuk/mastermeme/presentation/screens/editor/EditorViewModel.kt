@@ -15,6 +15,19 @@ class EditorViewModel @Inject constructor(): BaseEditorViewModel() {
         get() = EditorUiState()
 
     override fun onEvent(event: EditorUiEvent) {
-        TODO("Not yet implemented")
+        when (event) {
+            EditorUiEvent.AddTextClicked -> updateAddTextDialogState(true)
+            EditorUiEvent.SaveMemeClicked -> TODO()
+            is EditorUiEvent.ShowBasicDialog -> updateBasicDialogState(event.isVisible)
+            is EditorUiEvent.ShowAddTextDialog -> updateAddTextDialogState(event.isVisible)
+        }
+    }
+
+    private fun updateBasicDialogState(isVisible: Boolean) {
+        updateState { it.copy(showBasicDialog = isVisible) }
+    }
+
+    private fun updateAddTextDialogState(isVisible: Boolean) {
+        updateState { it.copy(showAddTextDialog = isVisible) }
     }
 }
