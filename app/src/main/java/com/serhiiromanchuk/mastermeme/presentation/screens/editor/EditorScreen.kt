@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -15,6 +16,7 @@ import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseContentLayout
 import com.serhiiromanchuk.mastermeme.presentation.core.components.BasicDialog
 import com.serhiiromanchuk.mastermeme.presentation.core.components.DialogWithTextField
 import com.serhiiromanchuk.mastermeme.presentation.core.components.MemeTopBar
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditingText
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditorBottomBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.FullScreenScrollableImage
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
@@ -46,6 +48,7 @@ fun EditorScreenRoot(modifier: Modifier = Modifier) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EditorScreen(
     uiState: EditorUiState,
@@ -59,6 +62,9 @@ private fun EditorScreen(
         contentAlignment = Alignment.Center
     ) {
         FullScreenScrollableImage(image = painterResource(R.drawable.otri4_40))
+        EditingText(
+            text = "TAP TWICE TO EDIT"
+        )
     }
 
     if (uiState.showBasicDialog) {
