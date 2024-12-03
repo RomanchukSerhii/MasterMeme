@@ -27,7 +27,7 @@ fun HomeBottomSheet(
     if (openBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = onDismiss,
-            sheetState = bottomSheetState,
+            sheetState = bottomSheetState
         ) {
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp)
