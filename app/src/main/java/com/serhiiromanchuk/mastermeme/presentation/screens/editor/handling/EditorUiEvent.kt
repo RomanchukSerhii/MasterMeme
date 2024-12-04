@@ -11,4 +11,6 @@ sealed interface EditorUiEvent : UiEvent {
     data class ShowBasicDialog(val isVisible: Boolean) : EditorUiEvent
 
     data class ShowAddTextDialog(val isVisible: Boolean) : EditorUiEvent
+
+    data class FontSizeChanged(val fontSize: Float) : EditorUiEvent
 }

@@ -15,4 +15,6 @@
     <string name="ok">OK</string>
     <string name="text">Text</string>
     <string name="delete_text">Delete text</string>
+    <string name="reset_font_size">Reset the font size</string>
+    <string name="apply_font_size">Apply the font size</string>
 </resources>

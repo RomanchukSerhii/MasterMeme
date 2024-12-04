@@ -20,7 +20,12 @@ class EditorViewModel @Inject constructor(): BaseEditorViewModel() {
             EditorUiEvent.SaveMemeClicked -> TODO()
             is EditorUiEvent.ShowBasicDialog -> updateBasicDialogState(event.isVisible)
             is EditorUiEvent.ShowAddTextDialog -> updateAddTextDialogState(event.isVisible)
+            is EditorUiEvent.FontSizeChanged -> updateFontSize(event.fontSize)
         }
+    }
+
+    private fun updateFontSize(fontSize: Float) {
+        updateState { it.copy(fontSize = fontSize) }
     }
 
     private fun updateBasicDialogState(isVisible: Boolean) {

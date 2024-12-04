@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedText
@@ -21,15 +22,16 @@ import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedText
 @Composable
 fun EditingText(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    fontSize: TextUnit
 ) {
     EditingBox {
         OutlinedText(
             modifier = modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-            text = text
+            text = text,
+            fontSize = fontSize
         )
     }
-
 }
 
 @Composable

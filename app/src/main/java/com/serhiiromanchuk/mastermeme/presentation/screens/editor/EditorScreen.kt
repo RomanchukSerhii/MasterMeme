@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseContentLayout
@@ -35,9 +35,11 @@ fun EditorScreenRoot(modifier: Modifier = Modifier) {
                 onBackClick = { viewModel.onEvent(EditorUiEvent.ShowBasicDialog(true)) }
             )
         },
-        bottomBar = {
+        bottomBar = { uiState ->
             EditorBottomBar(
-                onEvent = viewModel::onEvent
+                onEvent = viewModel::onEvent,
+                fontSize = uiState.fontSize,
+                editMode = true
             )
         }
     ) { uiState ->
@@ -48,7 +50,6 @@ fun EditorScreenRoot(modifier: Modifier = Modifier) {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun EditorScreen(
     uiState: EditorUiState,
@@ -63,7 +64,8 @@ private fun EditorScreen(
     ) {
         FullScreenScrollableImage(image = painterResource(R.drawable.otri4_40))
         EditingText(
-            text = "TAP TWICE TO EDIT"
+            text = "TAP TWICE TO EDIT",
+            fontSize = uiState.fontSize.sp
         )
     }
 

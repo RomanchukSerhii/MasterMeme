@@ -12,18 +12,18 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.sp
 import com.serhiiromanchuk.mastermeme.presentation.theme.Impact
 
 @ExperimentalComposeUiApi
 @Composable
 fun OutlinedText(
     text: String,
+    fontSize: TextUnit,
     modifier: Modifier = Modifier,
 ) {
     val textStyle = TextStyle(
         fontFamily = Impact,
-        fontSize = 28.sp,
+        fontSize = fontSize,
         color = Color.White
     )
     val letterSpacing = TextUnit(0F, TextUnitType.Sp)
