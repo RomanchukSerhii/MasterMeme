@@ -8,6 +8,12 @@ sealed interface EditorUiEvent : UiEvent {
 
     data object SaveMemeClicked : EditorUiEvent
 
+    data object ResetEditingClicked : EditorUiEvent
+
+    data object ApplyEditingClicked : EditorUiEvent
+
+    data object BottomSheetModeChanged : EditorUiEvent
+
     data class ShowBasicDialog(val isVisible: Boolean) : EditorUiEvent
 
     data class ShowAddTextDialog(val isVisible: Boolean) : EditorUiEvent

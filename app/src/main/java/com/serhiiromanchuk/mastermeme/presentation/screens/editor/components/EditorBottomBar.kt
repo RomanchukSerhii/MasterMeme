@@ -43,36 +43,43 @@ fun EditorBottomBar(
         modifier = modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.surface)
-            .padding(vertical = 12.dp, horizontal = 16.dp),
+            .height(72.dp)
+            .padding(horizontal = 16.dp),
         contentAlignment = Alignment.CenterEnd
     ) {
         if (editMode) {
             EditModeBottomBar(
                 fontSize = fontSize,
-                onValueChange = { fontSize -> onEvent(EditorUiEvent.FontSizeChanged(fontSize))}
+                onValueChange = { fontSize -> onEvent(EditorUiEvent.FontSizeChanged(fontSize)) },
+                onResetClicked = { onEvent(EditorUiEvent.ResetEditingClicked) },
+                onApplyClicked = { onEvent(EditorUiEvent.ApplyEditingClicked) }
             )
         } else {
-            InitialBottomBar(onEvent = onEvent)
+            NormalModeBottomBar(
+                onAddTextClicked = { onEvent(EditorUiEvent.AddTextClicked) },
+                onSaveMemeClicked = { onEvent(EditorUiEvent.SaveMemeClicked) }
+            )
         }
     }
 }
 
 @Composable
-private fun InitialBottomBar(
-    onEvent: (EditorUiEvent) -> Unit
+private fun NormalModeBottomBar(
+    onAddTextClicked: () -> Unit,
+    onSaveMemeClicked: () -> Unit
 ) {
     Row {
         // AddTextButton
         OutlinedButton(
             modifier = Modifier.padding(end = 16.dp),
-            onClick = { onEvent(EditorUiEvent.AddTextClicked) },
+            onClick = onAddTextClicked,
             labelText = stringResource(R.string.add_text)
         )
 
         // SaveMemeButton
         PrimaryButton(
             modifier = Modifier.padding(start = 16.dp),
-            onClick = { onEvent(EditorUiEvent.SaveMemeClicked) },
+            onClick = onSaveMemeClicked,
             labelText = stringResource(R.string.save_meme)
         )
     }
@@ -81,12 +88,14 @@ private fun InitialBottomBar(
 @Composable
 private fun EditModeBottomBar(
     fontSize: Float,
-    onValueChange: (Float) -> Unit
+    onValueChange: (Float) -> Unit,
+    onResetClicked: () -> Unit,
+    onApplyClicked: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
-        ResetIcon(onClick = {})
+        ResetIcon(onClick = onResetClicked)
         Spacer(modifier = Modifier.width(12.dp))
         TextSizeSlider(
             modifier = Modifier.weight(1f),
@@ -94,7 +103,7 @@ private fun EditModeBottomBar(
             onValueChange = onValueChange
         )
         Spacer(modifier = Modifier.width(12.dp))
-        ApplyIcon(onClick = {})
+        ApplyIcon(onClick = onApplyClicked)
     }
 }
 

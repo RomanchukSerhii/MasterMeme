@@ -39,7 +39,7 @@ fun EditorScreenRoot(modifier: Modifier = Modifier) {
             EditorBottomBar(
                 onEvent = viewModel::onEvent,
                 fontSize = uiState.fontSize,
-                editMode = true
+                editMode = uiState.bottomSheetEditMode
             )
         }
     ) { uiState ->
