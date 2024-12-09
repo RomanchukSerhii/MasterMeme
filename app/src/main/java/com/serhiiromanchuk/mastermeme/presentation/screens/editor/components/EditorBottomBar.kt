@@ -29,13 +29,14 @@ import androidx.compose.ui.unit.sp
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedButton
 import com.serhiiromanchuk.mastermeme.presentation.core.components.PrimaryButton
+import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.theme.Manrope
 
 @Composable
 fun EditorBottomBar(
     modifier: Modifier = Modifier,
-    fontSize: Float,
+    memeTextState: MemeTextState,
     editMode: Boolean = false,
     onEvent: (EditorUiEvent) -> Unit
 ) {
@@ -49,14 +50,16 @@ fun EditorBottomBar(
     ) {
         if (editMode) {
             EditModeBottomBar(
-                fontSize = fontSize,
-                onValueChange = { fontSize -> onEvent(EditorUiEvent.FontSizeChanged(fontSize)) },
-                onResetClicked = { onEvent(EditorUiEvent.ResetEditingClicked) },
-                onApplyClicked = { onEvent(EditorUiEvent.ApplyEditingClicked) }
+                fontSize = memeTextState.currentFontSize,
+                onValueChange = { fontSize ->
+                    onEvent(EditorUiEvent.FontSizeChanged(fontSize = fontSize))
+                },
+                onResetClicked = { onEvent(EditorUiEvent.ResetEditingClicked(memeTextState.id)) },
+                onApplyClicked = { onEvent(EditorUiEvent.ApplyEditingClicked(memeTextState.id)) }
             )
         } else {
             NormalModeBottomBar(
-                onAddTextClicked = { onEvent(EditorUiEvent.AddTextClicked) },
+                onAddTextClicked = { onEvent(EditorUiEvent.ShowEditTextDialog(true)) },
                 onSaveMemeClicked = { onEvent(EditorUiEvent.SaveMemeClicked) }
             )
         }
@@ -99,7 +102,7 @@ private fun EditModeBottomBar(
         Spacer(modifier = Modifier.width(12.dp))
         TextSizeSlider(
             modifier = Modifier.weight(1f),
-            startPostion = fontSize,
+            startPosition = fontSize,
             onValueChange = onValueChange
         )
         Spacer(modifier = Modifier.width(12.dp))
@@ -111,7 +114,7 @@ private fun EditModeBottomBar(
 @Composable
 private fun TextSizeSlider(
     modifier: Modifier = Modifier,
-    startPostion: Float,
+    startPosition: Float,
     onValueChange: (Float) -> Unit
 ) {
     Row(
@@ -122,7 +125,7 @@ private fun TextSizeSlider(
         FontSizeText(fontSize = 12.sp)
 
         Slider(
-            value = startPostion,
+            value = startPosition,
             onValueChange = { onValueChange(it) },
             valueRange = 18f..38f,
             steps = 19,
