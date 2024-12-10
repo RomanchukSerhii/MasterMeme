@@ -38,7 +38,9 @@ fun EditingText(
             onClick = {
                 if (!memeTextState.isEditMode) onClick(memeTextState.id)
             },
-            onDoubleClick = { onDoubleClick(memeTextState.id) },
+            onDoubleClick = {
+                if (memeTextState.isEditMode) onDoubleClick(memeTextState.id)
+            },
             onDeleteClick = { onDeleteClick(memeTextState.id) }
         ) {
             OutlinedText(

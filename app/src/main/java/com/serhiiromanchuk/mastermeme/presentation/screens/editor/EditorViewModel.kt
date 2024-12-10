@@ -35,7 +35,7 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
 
             is ApplyEditingClicked -> saveMemeTextState(isFontReset = false)
 
-            is EditTextDoubleClicked -> TODO()
+            is EditTextDoubleClicked -> updateEditTextDialogState(true)
 
             is EditTextClicked -> showEditableMemeTextState(getMemeTextState(event.memeId))
 
@@ -44,6 +44,14 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
     }
 
     private fun saveEditingText(text: String) {
+        if (currentState.editableMemeTextState.id < 0) {
+            addNewEditingText(text)
+        } else {
+            changeCurrentEditingText(text)
+        }
+    }
+
+    private fun addNewEditingText(text: String) {
         val newMemeId = if (currentState.memeTextList.isEmpty()) 0 else {
             currentState.memeTextList.last().id.plus(1)
         }
@@ -51,14 +59,23 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
             id = newMemeId,
             text = text
         )
-        updateState {
-            it.copy(
-                memeTextList = currentState.memeTextList + newMemeState,
-                editableMemeTextState = newMemeState.copy(isVisible = true, isEditMode = true),
-                showEditTextDialog = false,
-                bottomSheetEditMode = true
+
+        closeEditTextDialog(
+            updatedList = currentState.memeTextList + newMemeState,
+            editedMemeTextState = newMemeState.copy(
+                isVisible = true,
+                isEditMode = true
             )
-        }
+        )
+    }
+
+    private fun changeCurrentEditingText(text: String) {
+        val editedMemeTextState = currentState.editableMemeTextState.copy(text = text)
+        val updatedList = replaceMemeTextState(
+            editedMemeTextState.copy(isVisible = false, isEditMode = false)
+        )
+
+        closeEditTextDialog(updatedList, editedMemeTextState)
     }
 
     private fun deleteMemeTextState(memeId: Int) {
@@ -141,10 +158,6 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
         updateState { it.copy(showEditTextDialog = isVisible) }
     }
 
-    private fun updateMemeTextList(memeTextList: List<MemeTextState>) {
-        updateState { it.copy(memeTextList = memeTextList) }
-    }
-
     private fun getMemeTextState(memeId: Int): MemeTextState {
         return currentState.memeTextList.find { it.id == memeId } ?: MemeTextState()
     }
@@ -152,6 +165,20 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
     private fun replaceMemeTextState(memeTextState: MemeTextState): List<MemeTextState> {
         return currentState.memeTextList.map {
             if (it.id == memeTextState.id) memeTextState else it
+        }
+    }
+
+    private fun closeEditTextDialog(
+        updatedList: List<MemeTextState>,
+        editedMemeTextState: MemeTextState
+    ) {
+        updateState {
+            it.copy(
+                memeTextList = updatedList,
+                editableMemeTextState = editedMemeTextState,
+                showEditTextDialog = false,
+                bottomSheetEditMode = true
+            )
         }
     }
 }

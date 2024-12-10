@@ -6,9 +6,19 @@ import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
 
 data class EditorUiState(
     @DrawableRes val memeTemplate: Int = -1,
-    val memeTextList: List<MemeTextState> = listOf(),
-    val editableMemeTextState: MemeTextState = MemeTextState(),
+    val editableMemeTextState: MemeTextState = MemeTextState(
+        id = 0,
+        text = "Tap twice to edit",
+        isVisible = true,
+        isEditMode = true
+    ),
+    val memeTextList: List<MemeTextState> = listOf(
+        editableMemeTextState.copy(
+            isEditMode = false,
+            isVisible = false
+        )
+    ),
     val showBasicDialog: Boolean = false,
     val showEditTextDialog: Boolean = false,
-    val bottomSheetEditMode: Boolean = false
+    val bottomSheetEditMode: Boolean = true
 ) : UiState
