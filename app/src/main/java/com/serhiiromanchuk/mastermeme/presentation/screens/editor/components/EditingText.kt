@@ -3,12 +3,18 @@ package com.serhiiromanchuk.mastermeme.presentation.screens.editor.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -16,11 +22,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedText
 import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -32,15 +40,37 @@ fun EditingText(
     onDeleteClick: (memeId: Int) -> Unit
 ) {
     if (memeTextState.isVisible) {
+        var offsetX by remember { mutableFloatStateOf(memeTextState.offsetX) }
+        var offsetY by remember { mutableFloatStateOf(memeTextState.offsetX) }
         EditingBox(
-            modifier = modifier,
+            modifier = modifier
+                .offset {
+                    IntOffset(
+                        offsetX.roundToInt(),
+                        offsetY.roundToInt()
+                    )
+                }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onDoubleTap = {
+                            if (memeTextState.isEditMode) onDoubleClick(memeTextState.id)
+                        },
+                        onTap = {
+                            if (!memeTextState.isEditMode) onClick(memeTextState.id)
+                        }
+                    )
+
+                }
+                .pointerInput(Unit) {
+                    detectDragGestures { change, dragAmount ->
+                        if (memeTextState.isEditMode) {
+                            change.consume()
+                            offsetX += dragAmount.x
+                            offsetY += dragAmount.y
+                        }
+                    }
+                },
             isEditMode = memeTextState.isEditMode,
-            onClick = {
-                if (!memeTextState.isEditMode) onClick(memeTextState.id)
-            },
-            onDoubleClick = {
-                if (memeTextState.isEditMode) onDoubleClick(memeTextState.id)
-            },
             onDeleteClick = { onDeleteClick(memeTextState.id) }
         ) {
             OutlinedText(
@@ -56,27 +86,10 @@ fun EditingText(
 private fun EditingBox(
     modifier: Modifier = Modifier,
     isEditMode: Boolean,
-    onClick: () -> Unit,
-    onDoubleClick: () -> Unit,
     onDeleteClick: () -> Unit,
     content: @Composable () -> Unit
 ) {
-    Box(
-        modifier = modifier
-            .clickable {
-                onClick()
-            }
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onDoubleTap = {
-                        onDoubleClick()
-                    },
-                    onTap = {
-                        onClick()
-                    }
-                )
-            }
-    ) {
+    Box(modifier = modifier) {
         if (isEditMode) {
             Box(
                 modifier = Modifier

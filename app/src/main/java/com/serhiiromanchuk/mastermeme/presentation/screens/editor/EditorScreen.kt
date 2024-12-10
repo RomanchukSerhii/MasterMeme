@@ -1,11 +1,8 @@
 package com.serhiiromanchuk.mastermeme.presentation.screens.editor
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,32 +59,40 @@ private fun EditorScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        contentAlignment = Alignment.TopCenter
+        contentAlignment = Alignment.Center
     ) {
         FullScreenScrollableImage(image = painterResource(R.drawable.otri4_40))
 
-        LazyColumn {
-            item {
-                EditingText(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    memeTextState = uiState.editableMemeTextState,
-                    onClick = { onEvent(EditorUiEvent.EditTextClicked(it)) },
-                    onDoubleClick = { onEvent(EditorUiEvent.EditTextDoubleClicked(it)) },
-                    onDeleteClick = { onEvent(EditorUiEvent.DeleteEditTextClicked(it)) },
-                )
-                Spacer(modifier = Modifier.padding(bottom = 24.dp))
-            }
+        EditingText(
+            modifier = Modifier.padding(vertical = 12.dp),
+            memeTextState = uiState.editableMemeTextState,
+            onClick = { onEvent(EditorUiEvent.EditTextClicked(it)) },
+            onDoubleClick = { onEvent(EditorUiEvent.EditTextDoubleClicked(it)) },
+            onDeleteClick = { onEvent(EditorUiEvent.DeleteEditTextClicked(it)) }
+        )
 
-            items(items = uiState.memeTextList, key = { it.id }) { memeTextState ->
-                EditingText(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    memeTextState = memeTextState,
-                    onClick = { onEvent(EditorUiEvent.EditTextClicked(it)) },
-                    onDoubleClick = { onEvent(EditorUiEvent.EditTextDoubleClicked(it)) },
-                    onDeleteClick = { onEvent(EditorUiEvent.DeleteEditTextClicked(it)) },
-                )
-            }
-        }
+//        LazyColumn {
+//            item {
+//                EditingText(
+//                    modifier = Modifier.padding(vertical = 12.dp),
+//                    memeTextState = uiState.editableMemeTextState,
+//                    onClick = { onEvent(EditorUiEvent.EditTextClicked(it)) },
+//                    onDoubleClick = { onEvent(EditorUiEvent.EditTextDoubleClicked(it)) },
+//                    onDeleteClick = { onEvent(EditorUiEvent.DeleteEditTextClicked(it)) },
+//                )
+//                Spacer(modifier = Modifier.padding(bottom = 24.dp))
+//            }
+//
+//            items(items = uiState.memeTextList, key = { it.id }) { memeTextState ->
+//                EditingText(
+//                    modifier = Modifier.padding(vertical = 12.dp),
+//                    memeTextState = memeTextState,
+//                    onClick = { onEvent(EditorUiEvent.EditTextClicked(it)) },
+//                    onDoubleClick = { onEvent(EditorUiEvent.EditTextDoubleClicked(it)) },
+//                    onDeleteClick = { onEvent(EditorUiEvent.DeleteEditTextClicked(it)) },
+//                )
+//            }
+//        }
     }
 
     if (uiState.showBasicDialog) {

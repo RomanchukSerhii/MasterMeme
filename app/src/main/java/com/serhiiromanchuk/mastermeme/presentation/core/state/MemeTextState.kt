@@ -10,6 +10,8 @@ data class MemeTextState(
     val text: String = "",
     val isEditMode: Boolean = false,
     val isVisible: Boolean = false,
+    val offsetX: Float = 0f,
+    val offsetY: Float = 0f,
     val initialFontSize: Float = INITIAL_MEME_FONT_SIZE,
     val currentFontSize: Float = INITIAL_MEME_FONT_SIZE,
 )
