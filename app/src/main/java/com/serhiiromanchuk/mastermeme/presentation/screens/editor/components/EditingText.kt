@@ -3,75 +3,57 @@ package com.serhiiromanchuk.mastermeme.presentation.screens.editor.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedText
 import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
-import kotlin.math.roundToInt
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun EditingText(
     modifier: Modifier = Modifier,
     memeTextState: MemeTextState,
-    onClick: (memeId: Int) -> Unit,
-    onDoubleClick: (memeId: Int) -> Unit,
-    onDeleteClick: (memeId: Int) -> Unit
+    onEvent: (EditorUiEvent) -> Unit
 ) {
     if (memeTextState.isVisible) {
-        var offsetX by remember { mutableFloatStateOf(memeTextState.offsetX) }
-        var offsetY by remember { mutableFloatStateOf(memeTextState.offsetX) }
         EditingBox(
             modifier = modifier
-                .offset {
-                    IntOffset(
-                        offsetX.roundToInt(),
-                        offsetY.roundToInt()
-                    )
-                }
                 .pointerInput(Unit) {
                     detectTapGestures(
                         onDoubleTap = {
-                            if (memeTextState.isEditMode) onDoubleClick(memeTextState.id)
+                            if (memeTextState.isEditMode) {
+                                onEvent(EditorUiEvent.ShowEditTextDialog(true))
+                            }
                         },
                         onTap = {
-                            if (!memeTextState.isEditMode) onClick(memeTextState.id)
+                            if (!memeTextState.isEditMode) {
+                                onEvent(EditorUiEvent.EditTextClicked(memeTextState.id))
+                            }
                         }
                     )
-
-                }
-                .pointerInput(Unit) {
-                    detectDragGestures { change, dragAmount ->
-                        if (memeTextState.isEditMode) {
-                            change.consume()
-                            offsetX += dragAmount.x
-                            offsetY += dragAmount.y
-                        }
-                    }
                 },
             isEditMode = memeTextState.isEditMode,
-            onDeleteClick = { onDeleteClick(memeTextState.id) }
+            onDeleteClick = { onEvent(EditorUiEvent.DeleteEditTextClicked(memeTextState.id)) },
+            boxSizeDetermined = { width, height ->
+                onEvent(EditorUiEvent.EditingBoxSizeDetermined(width, height))
+            },
+            iconHeightDetermined = { onEvent(EditorUiEvent.EditingIconHeightDetermined(it)) }
         ) {
             OutlinedText(
                 modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
@@ -87,6 +69,8 @@ private fun EditingBox(
     modifier: Modifier = Modifier,
     isEditMode: Boolean,
     onDeleteClick: () -> Unit,
+    boxSizeDetermined: (width: Float, height: Float) -> Unit,
+    iconHeightDetermined: (height: Float) -> Unit,
     content: @Composable () -> Unit
 ) {
     Box(modifier = modifier) {
@@ -96,13 +80,21 @@ private fun EditingBox(
                     .padding(top = 10.dp, end = 10.dp)
                     .border(1.dp, Color.White, RoundedCornerShape(4.dp))
                     .background(Color.Transparent, RoundedCornerShape(4.dp))
+                    .onGloballyPositioned { coordinates ->
+                        val boxWidth = coordinates.size.width.toFloat()
+                        val boxHeight = coordinates.size.height.toFloat()
+                        boxSizeDetermined(boxWidth, boxHeight)
+                    }
             ) {
                 content()
             }
             Icon(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .clickable { onDeleteClick() },
+                    .clickable { onDeleteClick() }
+                    .onGloballyPositioned { coordinates ->
+                        iconHeightDetermined(coordinates.size.height.toFloat())
+                    },
                 painter = painterResource(R.drawable.ic_delete_edit),
                 contentDescription = stringResource(R.string.delete_text),
                 tint = Color.Unspecified
