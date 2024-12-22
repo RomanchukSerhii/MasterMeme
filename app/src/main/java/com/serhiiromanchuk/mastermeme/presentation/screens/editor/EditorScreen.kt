@@ -35,7 +35,7 @@ fun EditorScreenRoot(modifier: Modifier = Modifier) {
         bottomBar = { uiState ->
             EditorBottomBar(
                 onEvent = viewModel::onEvent,
-                memeTextState = uiState.editableMemeTextState,
+                memeTextState = uiState.editableTextState,
                 editMode = uiState.bottomSheetEditMode
             )
         }
@@ -56,7 +56,11 @@ private fun EditorScreen(
         modifier = Modifier.fillMaxSize().padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        MemeWithEditingText(textState = uiState.editableMemeTextState, onEvent = onEvent)
+        MemeWithEditingText(
+            textStateList = uiState.memeTextList,
+            editableTextState = uiState.editableTextState,
+            onEvent = onEvent
+        )
     }
 
     if (uiState.showBasicDialog) {
@@ -75,7 +79,7 @@ private fun EditorScreen(
         // EditTextDialog
         DialogWithTextField(
             headline = stringResource(R.string.text),
-            initialText = uiState.editableMemeTextState.text,
+            initialText = uiState.editableTextState.text,
             onConfirm = { text -> onEvent(EditorUiEvent.ConfirmEditDialogClicked(text)) },
             onDismissRequest = { onEvent(EditorUiEvent.ShowEditTextDialog(false)) }
         )

@@ -56,7 +56,12 @@ fun EditingText(
             iconHeightDetermined = { onEvent(EditorUiEvent.EditingIconHeightDetermined(it)) }
         ) {
             OutlinedText(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                modifier = Modifier
+                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                    .onGloballyPositioned { coordinates ->
+                        val textHeight = coordinates.size.height.toFloat()
+                        onEvent(EditorUiEvent.EditingTextHeightDetermined(textHeight))
+                    },
                 text = memeTextState.text.trim().uppercase(),
                 fontSize = memeTextState.currentFontSize.sp
             )

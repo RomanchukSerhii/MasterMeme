@@ -20,7 +20,8 @@ import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.Edito
 
 @Composable
 fun MemeWithEditingText(
-    textState: MemeTextState,
+    textStateList: List<MemeTextState>,
+    editableTextState: MemeTextState,
     onEvent: (EditorUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -42,30 +43,41 @@ fun MemeWithEditingText(
         EditingText(
             modifier = Modifier
                 .offset {
-                    if (textState.isInitialPosition) {
-                        textState.initialTextOffset.round()
+                    if (editableTextState.isInitialPosition) {
+                        editableTextState.middlePositionTextOffset.round()
                     } else {
-                        textState.offset.round()
+                        editableTextState.offset.round()
                     }
                 }
                 .draggable2D(
                     state = rememberDraggable2DState { delta ->
-                        val newOffset = textState.offset + delta
-                        val minValueY = 0f - textState.dimensions.deleteIconHeight / 2
+                        val newOffset = editableTextState.offset + delta
+                        val minValueY = 0f - editableTextState.dimensions.deleteIconHeight / 2
 
                         // Limit text movement within specified limits
                         onEvent(
                             EditorUiEvent.EditTextOffsetChanged(
                                 offset = Offset(
-                                    x = newOffset.x.coerceIn(0f, textState.dimensions.widthBound),
-                                    y = newOffset.y.coerceIn(minValueY, textState.dimensions.heightBound)
+                                    x = newOffset.x.coerceIn(0f, editableTextState.dimensions.widthBound),
+                                    y = newOffset.y.coerceIn(minValueY, editableTextState.dimensions.heightBound)
                                 )
                             )
                         )
                     }
                 ),
-            memeTextState = textState,
+            memeTextState = editableTextState,
             onEvent = onEvent
         )
+
+        textStateList.forEach { textState ->
+            EditingText(
+                modifier = Modifier
+                    .offset {
+                        textState.offset.round()
+                    },
+                memeTextState = textState,
+                onEvent = onEvent
+            )
+        }
     }
 }

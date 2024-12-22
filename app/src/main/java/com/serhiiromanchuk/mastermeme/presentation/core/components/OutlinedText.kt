@@ -28,7 +28,7 @@ fun OutlinedText(
     )
     val letterSpacing = TextUnit(0F, TextUnitType.Sp)
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier,) {
         Text(
             text = text,
             letterSpacing = letterSpacing,
@@ -37,7 +37,8 @@ fun OutlinedText(
 
         Text(
             text = text,
-            modifier = Modifier.semantics { invisibleToUser() },
+            modifier = Modifier
+                .semantics { invisibleToUser() },
             color = Color.Black,
             letterSpacing = letterSpacing,
             textDecoration = null,

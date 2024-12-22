@@ -17,5 +17,6 @@ sealed interface EditorUiEvent : UiEvent {
     data class DeleteEditTextClicked(val memeId: Int) : EditorUiEvent
     data class EditingBoxSizeDetermined(val width: Float, val height: Float) : EditorUiEvent
     data class EditingIconHeightDetermined(val height: Float) : EditorUiEvent
+    data class EditingTextHeightDetermined(val height: Float) : EditorUiEvent
     data class MemeImageSizeDetermined(val width: Float, val height: Float) : EditorUiEvent
 }

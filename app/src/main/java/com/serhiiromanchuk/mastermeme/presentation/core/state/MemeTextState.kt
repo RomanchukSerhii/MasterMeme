@@ -2,28 +2,30 @@ package com.serhiiromanchuk.mastermeme.presentation.core.state
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
-import com.serhiiromanchuk.mastermeme.presentation.core.utils.Constants.INITIAL_MEME_FONT_SIZE
-import com.serhiiromanchuk.mastermeme.presentation.core.utils.Constants.UNDEFINED_MEME_TEXT_STATE
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.Constants
 
 @Stable
 data class MemeTextState(
-    val id: Int = UNDEFINED_MEME_TEXT_STATE,
+    val id: Int = Constants.UNDEFINED_MEME_TEXT_STATE_ID,
     val text: String = "",
     val isEditMode: Boolean = false,
     val isVisible: Boolean = false,
     val isInitialPosition: Boolean = true,
     val dimensions: Dimensions = Dimensions(),
     val offset: Offset = Offset(0f, 0f),
-    val initialFontSize: Float = INITIAL_MEME_FONT_SIZE,
-    val currentFontSize: Float = INITIAL_MEME_FONT_SIZE,
+    val initialOffset: Offset = Offset(0f, 0f),
+    val initialFontSize: Float = Constants.INITIAL_MEME_FONT_SIZE,
+    val currentFontSize: Float = Constants.INITIAL_MEME_FONT_SIZE,
 ) {
-    val initialTextOffset = calculateInitialOffset()
+    val middlePositionTextOffset = calculateMiddlePositionOffset()
+    val editModeOffset = calculateEditModeOffset(isEditMode)
 
     @Stable
     data class Dimensions(
         val boxWidth: Float = 0f,
         val boxHeight: Float = 0f,
         val deleteIconHeight: Float = 0f,
+        val textHeight: Float = 0f,
         val parentImageHeight: Float = 0f,
         val parentImageWidth: Float = 0f,
     ) {
@@ -31,7 +33,16 @@ data class MemeTextState(
         val heightBound = parentImageHeight - boxHeight - deleteIconHeight / 2
     }
 
-    private fun calculateInitialOffset(): Offset {
+    private fun calculateEditModeOffset(isEditMode: Boolean): Offset {
+        val offsetY = if (isEditMode) {
+            offset.y + (dimensions.boxHeight - dimensions.textHeight + 5f)
+        } else {
+            offset.y - (dimensions.boxHeight - dimensions.textHeight + 5f)
+        }
+        return Offset(offset.x, offsetY)
+    }
+
+    private fun calculateMiddlePositionOffset(): Offset {
         val boxWidth = dimensions.boxWidth
         val boxHeight = dimensions.boxHeight
         val deleteIconHeight = dimensions.deleteIconHeight
