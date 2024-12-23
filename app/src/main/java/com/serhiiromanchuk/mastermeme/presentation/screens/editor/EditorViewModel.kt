@@ -31,11 +31,10 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
             is EditTextClicked -> showEditableMemeTextState(getMemeTextState(event.memeId))
             is EditTextOffsetChanged -> updateEditableTextOffset(event.offset)
             is DeleteEditTextClicked -> deleteMemeText(event.memeId)
-            is EditingBoxSizeDetermined -> {
-                updateEditableTextDimensions {
-                    copy(boxWidth = event.width, boxHeight = event.height)
-                }
-            }
+            is EditingBoxSizeDetermined -> updateEditingBoxSizeDimensions(
+                width = event.width,
+                height = event.height
+            )
 
             is EditingIconHeightDetermined -> updateEditableTextDimensions {
                 copy(deleteIconHeight = event.height)
@@ -80,14 +79,14 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
     }
 
     private fun resetEditableText() {
-        val updatedMeme = currentState.editableTextState.let {
+        val updatedEditableTextState = currentState.editableTextState.let {
             it.copy(
                 currentFontSize = it.initialFontSize,
                 offset = it.initialOffset
             )
         }
-        if (currentState.memeTextList.isNotEmpty()) {
-            hideEditableText(updatedMeme)
+        if (!isNewMeme(updatedEditableTextState)) {
+            hideEditableText(updatedEditableTextState)
         } else {
             updateState {
                 it.copy(
@@ -115,17 +114,17 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
         hideEditableText(updatedMeme)
     }
 
-    private fun showEditableMemeTextState(memeTextState: MemeTextState) {
+    private fun showEditableMemeTextState(textState: MemeTextState) {
         if (currentState.editableTextState.isEditMode) saveEditableText()
-        val updatedList = replaceMemeTextState(memeTextState.copy(isVisible = false))
+        val updatedList = replaceTextState(textState.copy(isVisible = false))
 
         updateState {
             it.copy(
                 memeTextList = updatedList,
                 bottomSheetEditMode = true,
-                editableTextState = memeTextState.copy(
+                editableTextState = textState.copy(
                     isEditMode = true,
-                    offset = memeTextState.editModeOffset
+                    offset = textState.editModeOffset
                 )
             )
         }
@@ -133,13 +132,10 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
 
     private fun updateEditableTextOffset(offset: Offset) {
         updateState {
-            val isInitial = it.editableTextState.isInitialPosition
-            val newOffset =
-                if (isInitial) it.editableTextState.middlePositionTextOffset + offset else offset
             it.copy(
                 editableTextState = it.editableTextState.copy(
                     isInitialPosition = false,
-                    offset = newOffset
+                    offset = offset
                 )
             )
         }
@@ -153,6 +149,33 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
                 bottomSheetEditMode = false,
                 editableTextState = MemeTextState()
             )
+        }
+    }
+
+    private fun updateEditingBoxSizeDimensions(width: Float, height: Float) {
+        val editableTextState = currentState.editableTextState
+        val boxOffset = if (editableTextState.isInitialPosition) {
+            editableTextState.middlePositionTextOffset
+        } else {
+            if ((editableTextState.offset.x + width) > editableTextState.dimensions.parentImageWidth ||
+                (editableTextState.offset.y + height) > editableTextState.dimensions.parentImageHeight
+            ) {
+                val offsetX =
+                    editableTextState.offset.x - ((editableTextState.offset.x + width) - editableTextState.dimensions.parentImageWidth)
+                val offsetY =
+                    editableTextState.offset.y - ((editableTextState.offset.y + editableTextState.dimensions.deleteIconHeight / 2 + height) - editableTextState.dimensions.parentImageHeight)
+                Offset(offsetX, offsetY)
+            } else editableTextState.offset
+        }
+        val updatedEditableTextState = editableTextState.copy(
+            offset = boxOffset,
+            dimensions = editableTextState.dimensions.copy(
+                boxWidth = width,
+                boxHeight = height
+            )
+        )
+        updateState {
+            it.copy(editableTextState = updatedEditableTextState)
         }
     }
 
@@ -178,14 +201,19 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
         )
     }
 
-    private fun hideEditableText(editedMemeTextState: MemeTextState) {
-        val updatedList = replaceMemeTextState(
-            editedMemeTextState.copy(
-                isEditMode = false,
-                isVisible = true,
-                offset = editedMemeTextState.editModeOffset
-            )
+    private fun hideEditableText(editedTextState: MemeTextState) {
+        val updatedTextState = editedTextState.copy(
+            isEditMode = false,
+            isVisible = true,
+            offset = editedTextState.editModeOffset
         )
+
+        val updatedList = if (isNewMeme(editedTextState)) {
+            addTextState(updatedTextState)
+        } else {
+            replaceTextState(updatedTextState)
+        }
+
         updateState {
             it.copy(
                 memeTextList = updatedList,
@@ -199,15 +227,16 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
         return currentState.memeTextList.find { it.id == memeId } ?: MemeTextState()
     }
 
-    private fun replaceMemeTextState(memeTextState: MemeTextState): List<MemeTextState> {
-        val isNewMeme = currentState.memeTextList.none { it.id == memeTextState.id }
-        return if (isNewMeme) {
-            currentState.memeTextList + memeTextState
-        } else {
-            currentState.memeTextList.map {
-                if (it.id == memeTextState.id) memeTextState else it
-            }
+    private fun addTextState(textState: MemeTextState) = currentState.memeTextList + textState
+
+    private fun replaceTextState(textState: MemeTextState): List<MemeTextState> {
+        return currentState.memeTextList.map {
+            if (it.id == textState.id) textState else it
         }
+    }
+
+    private fun isNewMeme(textState: MemeTextState): Boolean {
+        return currentState.memeTextList.none { it.id == textState.id }
     }
 
     private fun closeEditTextDialog(

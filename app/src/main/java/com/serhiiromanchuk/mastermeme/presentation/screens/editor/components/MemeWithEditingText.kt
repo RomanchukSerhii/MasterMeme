@@ -43,11 +43,12 @@ fun MemeWithEditingText(
         EditingText(
             modifier = Modifier
                 .offset {
-                    if (editableTextState.isInitialPosition) {
-                        editableTextState.middlePositionTextOffset.round()
-                    } else {
-                        editableTextState.offset.round()
-                    }
+//                    if (editableTextState.isInitialPosition) {
+//                        editableTextState.middlePositionTextOffset.round()
+//                    } else {
+//                        editableTextState.offset.round()
+//                    }
+                    editableTextState.offset.round()
                 }
                 .draggable2D(
                     state = rememberDraggable2DState { delta ->
