@@ -6,7 +6,8 @@ import com.serhiiromanchuk.mastermeme.presentation.core.base.common.UiEvent
 sealed interface EditorUiEvent : UiEvent {
     data object SaveMemeClicked : EditorUiEvent
     data object BottomSheetModeChanged : EditorUiEvent
-    data class ShowBasicDialog(val isVisible: Boolean) : EditorUiEvent
+    data class ShowLeaveDialog(val isVisible: Boolean) : EditorUiEvent
+    data object LeaveDialogConfirmClicked : EditorUiEvent
     data class ShowEditTextDialog(val isVisible: Boolean) : EditorUiEvent
     data class FontSizeChanged(val fontSize: Float) : EditorUiEvent
     data class ConfirmEditDialogClicked(val text: String) : EditorUiEvent

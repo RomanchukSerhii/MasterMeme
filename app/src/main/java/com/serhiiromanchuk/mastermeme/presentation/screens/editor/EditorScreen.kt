@@ -2,34 +2,46 @@ package com.serhiiromanchuk.mastermeme.presentation.screens.editor
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.serhiiromanchuk.mastermeme.R
+import com.serhiiromanchuk.mastermeme.navigaion.NavigationState
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseContentLayout
 import com.serhiiromanchuk.mastermeme.presentation.core.components.BasicDialog
 import com.serhiiromanchuk.mastermeme.presentation.core.components.DialogWithTextField
 import com.serhiiromanchuk.mastermeme.presentation.core.components.MemeTopBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditorBottomBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.MemeWithEditingText
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiState
 
 @Composable
-fun EditorScreenRoot(modifier: Modifier = Modifier) {
-    val viewModel: EditorViewModel = hiltViewModel()
+fun EditorScreenRoot(
+    modifier: Modifier = Modifier,
+    navigationState: NavigationState,
+    memeResId: Int
+) {
+    val viewModel: EditorViewModel =
+        hiltViewModel<EditorViewModel, EditorViewModel.EditorViewModelFactory> { factory ->
+            factory.create(memeResId)
+        }
 
     BaseContentLayout(
         modifier = modifier,
         viewModel = viewModel,
+        actionsEventHandler = { _, actionEvent ->
+            when (actionEvent) {
+                EditorActionEvent.NavigationBack -> navigationState.popBackStack()
+            }
+        },
         topBar = {
             MemeTopBar(
                 title = stringResource(R.string.new_meme),
-                onBackClick = { viewModel.onEvent(EditorUiEvent.ShowBasicDialog(true)) }
+                onBackClick = { viewModel.onEvent(EditorUiEvent.ShowLeaveDialog(true)) }
             )
         },
         bottomBar = { uiState ->
@@ -53,10 +65,11 @@ private fun EditorScreen(
     onEvent: (EditorUiEvent) -> Unit
 ) {
     Box(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         MemeWithEditingText(
+            memeResId = uiState.memeResId,
             textStateList = uiState.memeTextList,
             editableTextState = uiState.editableTextState,
             onEvent = onEvent
@@ -68,8 +81,8 @@ private fun EditorScreen(
         BasicDialog(
             headline = stringResource(R.string.leave_dialog_headline),
             supportingText = stringResource(R.string.leave_dialog_supporting_text),
-            onDismissRequest = { onEvent(EditorUiEvent.ShowBasicDialog(false)) },
-            onConfirm = { onEvent(EditorUiEvent.ShowBasicDialog(false)) },
+            onDismissRequest = { onEvent(EditorUiEvent.ShowLeaveDialog(false)) },
+            onConfirm = { onEvent(EditorUiEvent.LeaveDialogConfirmClicked) },
             cancelButtonName = stringResource(R.string.cancel),
             confirmButtonName = stringResource(R.string.leave)
         )

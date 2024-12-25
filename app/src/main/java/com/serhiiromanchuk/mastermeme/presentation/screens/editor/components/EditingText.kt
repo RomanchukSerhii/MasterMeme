@@ -9,6 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -78,6 +83,12 @@ private fun EditingBox(
     iconHeightDetermined: (height: Float) -> Unit,
     content: @Composable () -> Unit
 ) {
+    var boxWidth by rememberSaveable { mutableFloatStateOf(0f) }
+    var boxHeight by rememberSaveable { mutableFloatStateOf(0f) }
+
+    LaunchedEffect(boxWidth) {
+        boxSizeDetermined(boxWidth, boxHeight)
+    }
     Box(modifier = modifier) {
         if (isEditMode) {
             Box(
@@ -86,9 +97,8 @@ private fun EditingBox(
                     .border(1.dp, Color.White, RoundedCornerShape(4.dp))
                     .background(Color.Transparent, RoundedCornerShape(4.dp))
                     .onGloballyPositioned { coordinates ->
-                        val boxWidth = coordinates.size.width.toFloat()
-                        val boxHeight = coordinates.size.height.toFloat()
-                        boxSizeDetermined(boxWidth, boxHeight)
+                        boxWidth = coordinates.size.width.toFloat()
+                        boxHeight = coordinates.size.height.toFloat()
                     }
             ) {
                 content()

@@ -2,6 +2,7 @@
 
 package com.serhiiromanchuk.mastermeme.presentation.screens.editor.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.draggable2D
 import androidx.compose.foundation.gestures.rememberDraggable2DState
@@ -14,12 +15,12 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.round
-import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 
 @Composable
 fun MemeWithEditingText(
+    @DrawableRes memeResId: Int,
     textStateList: List<MemeTextState>,
     editableTextState: MemeTextState,
     onEvent: (EditorUiEvent) -> Unit,
@@ -37,17 +38,12 @@ fun MemeWithEditingText(
                         )
                     )
                 },
-            image = painterResource(R.drawable.otri4_40)
+            image = painterResource(id = memeResId)
         )
 
         EditingText(
             modifier = Modifier
                 .offset {
-//                    if (editableTextState.isInitialPosition) {
-//                        editableTextState.middlePositionTextOffset.round()
-//                    } else {
-//                        editableTextState.offset.round()
-//                    }
                     editableTextState.offset.round()
                 }
                 .draggable2D(
@@ -59,8 +55,14 @@ fun MemeWithEditingText(
                         onEvent(
                             EditorUiEvent.EditTextOffsetChanged(
                                 offset = Offset(
-                                    x = newOffset.x.coerceIn(0f, editableTextState.dimensions.widthBound),
-                                    y = newOffset.y.coerceIn(minValueY, editableTextState.dimensions.heightBound)
+                                    x = newOffset.x.coerceIn(
+                                        0f,
+                                        editableTextState.dimensions.widthBound
+                                    ),
+                                    y = newOffset.y.coerceIn(
+                                        minValueY,
+                                        editableTextState.dimensions.heightBound
+                                    )
                                 )
                             )
                         )

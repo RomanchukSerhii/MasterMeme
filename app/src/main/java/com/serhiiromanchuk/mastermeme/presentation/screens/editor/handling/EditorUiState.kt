@@ -6,7 +6,7 @@ import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.core.utils.Constants
 
 data class EditorUiState(
-    @DrawableRes val memeTemplate: Int = -1,
+    @DrawableRes val memeResId: Int = Constants.UNDEFINED_MEME_RES_ID,
     val editableTextState: MemeTextState = INITIAL_MEME_TEXT_STATE,
     val memeTextList: List<MemeTextState> = listOf(),
     val showBasicDialog: Boolean = false,

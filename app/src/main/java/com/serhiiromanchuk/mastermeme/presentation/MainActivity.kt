@@ -6,12 +6,15 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.serhiiromanchuk.mastermeme.presentation.screens.editor.EditorScreenRoot
+import com.serhiiromanchuk.mastermeme.navigaion.RootAppNavigation
+import com.serhiiromanchuk.mastermeme.navigaion.rememberNavigationState
 import com.serhiiromanchuk.mastermeme.presentation.theme.MasterMemeBlack
 import com.serhiiromanchuk.mastermeme.presentation.theme.MasterMemeLightBlack
 import com.serhiiromanchuk.mastermeme.presentation.theme.MasterMemeTheme
@@ -30,11 +33,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MasterMemeTheme {
+                val navigationState = rememberNavigationState()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.surfaceVariant
                 ) {
-                    EditorScreenRoot()
+                    RootAppNavigation(
+                        modifier = Modifier.padding(16.dp),
+                        navigationState = navigationState
+                    )
                 }
             }
         }

@@ -43,7 +43,7 @@ fun <S : UiState, E : UiEvent, A : ActionEvent> BaseContentLayout(
     containerColor: Color = MaterialTheme.colorScheme.background,
     contentColor: Color = contentColorFor(containerColor),
     contentWindowInsets: WindowInsets = ScaffoldDefaults.contentWindowInsets,
-    actionsEventHandler: (suspend CoroutineScope.(context: Context) -> Unit)? = null,
+    actionsEventHandler: (suspend CoroutineScope.(context: Context, actionEvent: A) -> Unit)? = null,
     content: @Composable (BoxScope.(uiState: S) -> Unit)
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -53,7 +53,9 @@ fun <S : UiState, E : UiEvent, A : ActionEvent> BaseContentLayout(
     LaunchedEffect(key1 = lifecycle) {
         if (actionsEventHandler != null) {
             lifecycle.repeatOnLifecycle(state = Lifecycle.State.STARTED) {
-                actionsEventHandler(context)
+                viewModel.actionEvent.collect { actionEvent ->
+                    actionsEventHandler(context, actionEvent)
+                }
             }
         }
     }
@@ -64,7 +66,7 @@ fun <S : UiState, E : UiEvent, A : ActionEvent> BaseContentLayout(
     )
 
     Scaffold(
-        modifier = modifier
+        modifier = Modifier
             .windowInsetsPadding(WindowInsets.safeDrawing)
             .fillMaxWidth()
             .wrapContentHeight(),
@@ -77,7 +79,7 @@ fun <S : UiState, E : UiEvent, A : ActionEvent> BaseContentLayout(
         contentColor = contentColor,
         contentWindowInsets = contentWindowInsets,
     ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
+        Box(modifier = modifier.padding(paddingValues)) {
             content(uiState)
         }
     }

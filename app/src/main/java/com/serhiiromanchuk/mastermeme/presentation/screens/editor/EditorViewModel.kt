@@ -6,23 +6,46 @@ import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.core.utils.Constants
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
-import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.*
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ApplyEditingClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.BottomSheetModeChanged
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ConfirmEditDialogClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.DeleteEditTextClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditTextClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditTextOffsetChanged
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditingBoxSizeDetermined
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditingIconHeightDetermined
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditingTextHeightDetermined
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.FontSizeChanged
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.LeaveDialogConfirmClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.MemeImageSizeDetermined
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ResetEditingClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.SaveMemeClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ShowEditTextDialog
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ShowLeaveDialog
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
 private typealias BaseEditorViewModel = BaseViewModel<EditorUiState, EditorUiEvent, EditorActionEvent>
 
-@HiltViewModel
-class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
+@HiltViewModel(assistedFactory = EditorViewModel.EditorViewModelFactory::class)
+class EditorViewModel @AssistedInject constructor(
+    @Assisted val memeResId: Int
+) : BaseEditorViewModel() {
     override val initialState: EditorUiState
         get() = EditorUiState()
+
+    init {
+        updateState { it.copy(memeResId = memeResId) }
+    }
 
     override fun onEvent(event: EditorUiEvent) {
         when (event) {
             SaveMemeClicked -> handleSaveMemeClicked()
             BottomSheetModeChanged -> toggleBottomSheetMode()
-            is ShowBasicDialog -> updateDialogVisibility { copy(showBasicDialog = event.isVisible) }
+            is ShowLeaveDialog -> updateDialogVisibility { copy(showBasicDialog = event.isVisible) }
             is ShowEditTextDialog -> updateDialogVisibility { copy(showEditTextDialog = event.isVisible) }
             is FontSizeChanged -> updateFontSize(event.fontSize)
             is ConfirmEditDialogClicked -> updateEditableText(event.text)
@@ -46,6 +69,11 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
 
             is MemeImageSizeDetermined -> updateEditableTextDimensions {
                 copy(parentImageWidth = event.width, parentImageHeight = event.height)
+            }
+
+            LeaveDialogConfirmClicked -> {
+                updateDialogVisibility { copy(showBasicDialog = false) }
+                sendActionEvent(EditorActionEvent.NavigationBack)
             }
         }
     }
@@ -153,29 +181,21 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
     }
 
     private fun updateEditingBoxSizeDimensions(width: Float, height: Float) {
-        val editableTextState = currentState.editableTextState
-        val boxOffset = if (editableTextState.isInitialPosition) {
-            editableTextState.middlePositionTextOffset
-        } else {
-            if ((editableTextState.offset.x + width) > editableTextState.dimensions.parentImageWidth ||
-                (editableTextState.offset.y + height) > editableTextState.dimensions.parentImageHeight
-            ) {
-                val offsetX =
-                    editableTextState.offset.x - ((editableTextState.offset.x + width) - editableTextState.dimensions.parentImageWidth)
-                val offsetY =
-                    editableTextState.offset.y - ((editableTextState.offset.y + editableTextState.dimensions.deleteIconHeight / 2 + height) - editableTextState.dimensions.parentImageHeight)
-                Offset(offsetX, offsetY)
-            } else editableTextState.offset
-        }
-        val updatedEditableTextState = editableTextState.copy(
-            offset = boxOffset,
-            dimensions = editableTextState.dimensions.copy(
+        val updatedTextState = currentState.editableTextState.copy(
+            dimensions = currentState.editableTextState.dimensions.copy(
                 boxWidth = width,
                 boxHeight = height
             )
         )
+
+        val boxOffset = if (updatedTextState.isInitialPosition) {
+            updatedTextState.middlePositionTextOffset
+        } else {
+            updatedTextState.ensureWithinBoundsOffset
+        }
+
         updateState {
-            it.copy(editableTextState = updatedEditableTextState)
+            it.copy(editableTextState = updatedTextState.copy(offset = boxOffset))
         }
     }
 
@@ -249,5 +269,10 @@ class EditorViewModel @Inject constructor() : BaseEditorViewModel() {
                 bottomSheetEditMode = true
             )
         }
+    }
+
+    @AssistedFactory
+    interface EditorViewModelFactory {
+        fun create(memeResId: Int): EditorViewModel
     }
 }

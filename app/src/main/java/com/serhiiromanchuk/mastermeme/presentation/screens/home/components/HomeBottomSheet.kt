@@ -15,18 +15,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.utils.MemeTemplateProvider
+import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeBottomSheet(
     openBottomSheet: Boolean,
-    onDismiss: () -> Unit
+    onEvent: (HomeUiEvent) -> Unit
 ) {
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
 
     if (openBottomSheet) {
         ModalBottomSheet(
-            onDismissRequest = onDismiss,
+            onDismissRequest = { onEvent(HomeUiEvent.BottomSheetDismissed) },
             sheetState = bottomSheetState
         ) {
             Column(
@@ -44,7 +45,8 @@ fun HomeBottomSheet(
                 Spacer(Modifier.height(36.dp))
                 MemeVerticalGrid(
                     modifier = Modifier.padding(6.dp),
-                    memes = MemeTemplateProvider.memesList
+                    memes = MemeTemplateProvider.memesList,
+                    onMemeClicked = { memeResId -> onEvent(HomeUiEvent.OnMemeClicked(memeResId)) }
                 )
             }
         }

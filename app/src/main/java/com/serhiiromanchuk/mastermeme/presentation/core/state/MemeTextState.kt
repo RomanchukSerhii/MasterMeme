@@ -19,6 +19,7 @@ data class MemeTextState(
 ) {
     val middlePositionTextOffset = calculateMiddlePositionOffset()
     val editModeOffset = calculateEditModeOffset(isEditMode)
+    val ensureWithinBoundsOffset = adjustOffsetToBounds()
 
     @Stable
     data class Dimensions(
@@ -53,5 +54,24 @@ data class MemeTextState(
             x = parentImageWidth / 2 - boxWidth / 2,
             y = parentImageHeight / 2 - (boxHeight + deleteIconHeight) / 2
         )
+    }
+
+    private fun adjustOffsetToBounds(): Offset {
+        val horizontalOverflow = (offset.x + dimensions.boxWidth) - dimensions.parentImageWidth
+        val verticalOverflow = (offset.y + dimensions.boxHeight + dimensions.deleteIconHeight / 2) - dimensions.parentImageHeight
+
+        val adjustedX = if (offset.x + dimensions.boxWidth > dimensions.parentImageWidth) {
+            offset.x - horizontalOverflow
+        } else {
+            offset.x
+        }
+
+        val adjustedY = if (offset.y + dimensions.boxHeight + dimensions.deleteIconHeight / 2 > dimensions.parentImageHeight) {
+            offset.y - verticalOverflow
+        } else {
+            offset.y
+        }
+
+        return Offset(adjustedX, adjustedY)
     }
 }

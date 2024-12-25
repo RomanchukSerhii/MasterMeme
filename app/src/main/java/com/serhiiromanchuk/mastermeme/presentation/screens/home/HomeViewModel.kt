@@ -18,6 +18,10 @@ class HomeViewModel @Inject constructor() : BaseHomeViewModel() {
         when (event) {
             HomeUiEvent.FabClicked -> updateBottomSheetState(true)
             HomeUiEvent.BottomSheetDismissed -> updateBottomSheetState(false)
+            is HomeUiEvent.OnMemeClicked -> {
+                updateBottomSheetState(false)
+                sendActionEvent(HomeActionEvent.NavigateToEditor(event.memeResId))
+            }
         }
     }
 
