@@ -14,6 +14,7 @@ import com.serhiiromanchuk.mastermeme.presentation.core.components.BasicDialog
 import com.serhiiromanchuk.mastermeme.presentation.core.components.DialogWithTextField
 import com.serhiiromanchuk.mastermeme.presentation.core.components.MemeTopBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditorBottomBar
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditorBottomSheet
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.MemeWithEditingText
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
@@ -48,12 +49,16 @@ fun EditorScreenRoot(
             EditorBottomBar(
                 onEvent = viewModel::onEvent,
                 memeTextState = uiState.editableTextState,
-                editMode = uiState.bottomSheetEditMode
+                editMode = uiState.bottomBarEditMode
             )
         }
     ) { uiState ->
         EditorScreen(
             uiState = uiState,
+            onEvent = viewModel::onEvent
+        )
+        EditorBottomSheet(
+            openBottomSheet = uiState.bottomSheetOpened,
             onEvent = viewModel::onEvent
         )
     }

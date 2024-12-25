@@ -5,7 +5,7 @@ import com.serhiiromanchuk.mastermeme.presentation.core.base.common.UiEvent
 
 sealed interface EditorUiEvent : UiEvent {
     data object SaveMemeClicked : EditorUiEvent
-    data object BottomSheetModeChanged : EditorUiEvent
+    data object BottomBarModeChanged : EditorUiEvent
     data class ShowLeaveDialog(val isVisible: Boolean) : EditorUiEvent
     data object LeaveDialogConfirmClicked : EditorUiEvent
     data class ShowEditTextDialog(val isVisible: Boolean) : EditorUiEvent
@@ -20,4 +20,5 @@ sealed interface EditorUiEvent : UiEvent {
     data class EditingIconHeightDetermined(val height: Float) : EditorUiEvent
     data class EditingTextHeightDetermined(val height: Float) : EditorUiEvent
     data class MemeImageSizeDetermined(val width: Float, val height: Float) : EditorUiEvent
+    data object BottomSheetDismissed : EditorUiEvent
 }

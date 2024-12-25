@@ -17,4 +17,8 @@
     <string name="delete_text">Delete text</string>
     <string name="reset_font_size">Reset the font size</string>
     <string name="apply_font_size">Apply the font size</string>
+    <string name="save_to_device">Save to device</string>
+    <string name="save_meme_subtitle">Save created meme in the Files of your device</string>
+    <string name="share_the_meme">Share the meme</string>
+    <string name="share_meme_subtitle">Share your meme or open it in the other App</string>
 </resources>

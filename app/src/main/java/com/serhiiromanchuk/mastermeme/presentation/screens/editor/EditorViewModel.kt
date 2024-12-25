@@ -7,7 +7,7 @@ import com.serhiiromanchuk.mastermeme.presentation.core.utils.Constants
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ApplyEditingClicked
-import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.BottomSheetModeChanged
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.BottomBarModeChanged
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ConfirmEditDialogClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.DeleteEditTextClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditTextClicked
@@ -43,8 +43,8 @@ class EditorViewModel @AssistedInject constructor(
 
     override fun onEvent(event: EditorUiEvent) {
         when (event) {
-            SaveMemeClicked -> handleSaveMemeClicked()
-            BottomSheetModeChanged -> toggleBottomSheetMode()
+            SaveMemeClicked -> updateBottomSheetState(true)
+            BottomBarModeChanged -> toggleBottomBarMode()
             is ShowLeaveDialog -> updateDialogVisibility { copy(showBasicDialog = event.isVisible) }
             is ShowEditTextDialog -> updateDialogVisibility { copy(showEditTextDialog = event.isVisible) }
             is FontSizeChanged -> updateFontSize(event.fontSize)
@@ -75,15 +75,13 @@ class EditorViewModel @AssistedInject constructor(
                 updateDialogVisibility { copy(showBasicDialog = false) }
                 sendActionEvent(EditorActionEvent.NavigationBack)
             }
+
+            EditorUiEvent.BottomSheetDismissed -> updateBottomSheetState(false)
         }
     }
 
-    private fun handleSaveMemeClicked() {
-        // TODO: Implement saving logic
-    }
-
-    private fun toggleBottomSheetMode() {
-        updateState { it.copy(bottomSheetEditMode = !it.bottomSheetEditMode) }
+    private fun toggleBottomBarMode() {
+        updateState { it.copy(bottomBarEditMode = !it.bottomBarEditMode) }
     }
 
     private fun updateDialogVisibility(update: EditorUiState.() -> EditorUiState) {
@@ -124,7 +122,7 @@ class EditorViewModel @AssistedInject constructor(
                         isVisible = false,
                         isEditMode = true
                     ),
-                    bottomSheetEditMode = false
+                    bottomBarEditMode = false
                 )
             }
         }
@@ -149,7 +147,7 @@ class EditorViewModel @AssistedInject constructor(
         updateState {
             it.copy(
                 memeTextList = updatedList,
-                bottomSheetEditMode = true,
+                bottomBarEditMode = true,
                 editableTextState = textState.copy(
                     isEditMode = true,
                     offset = textState.editModeOffset
@@ -174,7 +172,7 @@ class EditorViewModel @AssistedInject constructor(
         updateState {
             it.copy(
                 memeTextList = updatedList,
-                bottomSheetEditMode = false,
+                bottomBarEditMode = false,
                 editableTextState = MemeTextState()
             )
         }
@@ -204,6 +202,10 @@ class EditorViewModel @AssistedInject constructor(
         updateState {
             it.copy(editableTextState = it.editableTextState.copy(dimensions = dimensions))
         }
+    }
+
+    private fun updateBottomSheetState(openBottomSheet: Boolean) {
+        updateState { it.copy(bottomSheetOpened = openBottomSheet) }
     }
 
     private fun addNewEditableText(text: String) {
@@ -237,7 +239,7 @@ class EditorViewModel @AssistedInject constructor(
         updateState {
             it.copy(
                 memeTextList = updatedList,
-                bottomSheetEditMode = false,
+                bottomBarEditMode = false,
                 editableTextState = MemeTextState()
             )
         }
@@ -266,7 +268,7 @@ class EditorViewModel @AssistedInject constructor(
             it.copy(
                 editableTextState = editedMemeTextState,
                 showEditTextDialog = false,
-                bottomSheetEditMode = true
+                bottomBarEditMode = true
             )
         }
     }

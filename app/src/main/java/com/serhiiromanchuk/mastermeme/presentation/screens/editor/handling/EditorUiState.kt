@@ -11,7 +11,8 @@ data class EditorUiState(
     val memeTextList: List<MemeTextState> = listOf(),
     val showBasicDialog: Boolean = false,
     val showEditTextDialog: Boolean = false,
-    val bottomSheetEditMode: Boolean = true
+    val bottomBarEditMode: Boolean = true,
+    val bottomSheetOpened: Boolean = false
 ) : UiState {
     companion object {
         private val INITIAL_MEME_TEXT_STATE = MemeTextState(
