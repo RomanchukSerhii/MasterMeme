@@ -57,6 +57,7 @@ fun EditorScreenRoot(
             uiState = uiState,
             onEvent = viewModel::onEvent
         )
+
         EditorBottomSheet(
             openBottomSheet = uiState.bottomSheetOpened,
             onEvent = viewModel::onEvent

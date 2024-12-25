@@ -1,4 +1,6 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class
+)
 
 package com.serhiiromanchuk.mastermeme.presentation.screens.editor.components
 
@@ -39,14 +41,16 @@ fun EditorBottomSheet(
             onDismissRequest = { onEvent(EditorUiEvent.BottomSheetDismissed) }
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 16.dp)
             ) {
                 // Save to device
                 SaveOptions(
                     icon = painterResource(R.drawable.ic_download),
                     title = stringResource(R.string.save_to_device),
                     subtitle = stringResource(R.string.save_meme_subtitle),
-                    onClick = {}
+                    onClick = { onEvent(EditorUiEvent.SaveToDeviceClicked) }
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -56,7 +60,7 @@ fun EditorBottomSheet(
                     icon = painterResource(R.drawable.ic_share),
                     title = stringResource(R.string.share_the_meme),
                     subtitle = stringResource(R.string.share_meme_subtitle),
-                    onClick = {}
+                    onClick = {  }
                 )
             }
         }

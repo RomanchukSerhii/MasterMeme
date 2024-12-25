@@ -3,11 +3,15 @@ package com.serhiiromanchuk.mastermeme.presentation.screens.editor
 import androidx.compose.ui.geometry.Offset
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseViewModel
 import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.BitmapProcessor
 import com.serhiiromanchuk.mastermeme.presentation.core.utils.Constants
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ApplyEditingClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.BottomBarModeChanged
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.BottomSheetDismissed
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.SaveToDeviceClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ShareMemeClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ConfirmEditDialogClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.DeleteEditTextClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditTextClicked
@@ -18,6 +22,7 @@ import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.Edito
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.FontSizeChanged
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.LeaveDialogConfirmClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.MemeImageSizeDetermined
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.PictureSaved
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ResetEditingClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.SaveMemeClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ShowEditTextDialog
@@ -32,7 +37,8 @@ private typealias BaseEditorViewModel = BaseViewModel<EditorUiState, EditorUiEve
 
 @HiltViewModel(assistedFactory = EditorViewModel.EditorViewModelFactory::class)
 class EditorViewModel @AssistedInject constructor(
-    @Assisted val memeResId: Int
+    @Assisted val memeResId: Int,
+    private val bitmapProcessor: BitmapProcessor
 ) : BaseEditorViewModel() {
     override val initialState: EditorUiState
         get() = EditorUiState()
@@ -45,6 +51,9 @@ class EditorViewModel @AssistedInject constructor(
         when (event) {
             SaveMemeClicked -> updateBottomSheetState(true)
             BottomBarModeChanged -> toggleBottomBarMode()
+            BottomSheetDismissed -> updateBottomSheetState(false)
+            SaveToDeviceClicked -> savePictureToDevice()
+            ShareMemeClicked -> TODO()
             is ShowLeaveDialog -> updateDialogVisibility { copy(showBasicDialog = event.isVisible) }
             is ShowEditTextDialog -> updateDialogVisibility { copy(showEditTextDialog = event.isVisible) }
             is FontSizeChanged -> updateFontSize(event.fontSize)
@@ -76,12 +85,19 @@ class EditorViewModel @AssistedInject constructor(
                 sendActionEvent(EditorActionEvent.NavigationBack)
             }
 
-            EditorUiEvent.BottomSheetDismissed -> updateBottomSheetState(false)
+            is PictureSaved -> updateState { it.copy(memePicture = event.memePicture) }
         }
     }
 
     private fun toggleBottomBarMode() {
         updateState { it.copy(bottomBarEditMode = !it.bottomBarEditMode) }
+    }
+
+    private fun savePictureToDevice() {
+        val bitmap = bitmapProcessor.createBitmapFromPicture(currentState.memePicture)
+        launch {
+            bitmapProcessor.saveBitmapToDisk(bitmap)
+        }
     }
 
     private fun updateDialogVisibility(update: EditorUiState.() -> EditorUiState) {
