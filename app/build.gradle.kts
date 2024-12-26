@@ -69,9 +69,15 @@ dependencies {
     ksp(libs.hilt.compiler)
     implementation(libs.hilt.compose)
 
+    // Coil
+    implementation(libs.coil)
+
     //Navigation Compose
     implementation(libs.androidx.navigation.compose)
 
     // Splashscreen
     implementation(libs.androidx.splashscreen)
+
+    // Permission
+    implementation(libs.androidx.permission)
 }

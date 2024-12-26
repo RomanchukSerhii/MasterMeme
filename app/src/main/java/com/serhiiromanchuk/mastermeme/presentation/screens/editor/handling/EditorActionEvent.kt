@@ -4,4 +4,5 @@ import com.serhiiromanchuk.mastermeme.presentation.core.base.common.ActionEvent
 
 sealed interface EditorActionEvent : ActionEvent {
     data object NavigationBack : EditorActionEvent
+    data object ShowToast : EditorActionEvent
 }

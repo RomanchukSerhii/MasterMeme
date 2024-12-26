@@ -1,5 +1,6 @@
 package com.serhiiromanchuk.mastermeme.presentation.screens.home
 
+import com.serhiiromanchuk.mastermeme.domain.rejpository.MemeDbRepository
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseViewModel
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent
@@ -10,9 +11,19 @@ import javax.inject.Inject
 private typealias BaseHomeViewModel = BaseViewModel<HomeUiState, HomeUiEvent, HomeActionEvent>
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : BaseHomeViewModel() {
+class HomeViewModel @Inject constructor(
+    private val memeDbRepository: MemeDbRepository
+) : BaseHomeViewModel() {
     override val initialState: HomeUiState
         get() = HomeUiState()
+
+    init {
+        launch {
+            memeDbRepository.getAllMemes().collect { memes ->
+                updateState { it.copy(memes = memes) }
+            }
+        }
+    }
 
     override fun onEvent(event: HomeUiEvent) {
         when (event) {

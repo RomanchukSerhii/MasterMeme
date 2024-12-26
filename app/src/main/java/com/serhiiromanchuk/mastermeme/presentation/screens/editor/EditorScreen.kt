@@ -1,5 +1,6 @@
 package com.serhiiromanchuk.mastermeme.presentation.screens.editor
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -16,7 +17,8 @@ import com.serhiiromanchuk.mastermeme.presentation.core.components.MemeTopBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditorBottomBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditorBottomSheet
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.MemeWithEditingText
-import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent.NavigationBack
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent.ShowToast
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiState
 
@@ -34,9 +36,16 @@ fun EditorScreenRoot(
     BaseContentLayout(
         modifier = modifier,
         viewModel = viewModel,
-        actionsEventHandler = { _, actionEvent ->
+        actionsEventHandler = { context, actionEvent ->
             when (actionEvent) {
-                EditorActionEvent.NavigationBack -> navigationState.popBackStack()
+                NavigationBack -> navigationState.popBackStack()
+                ShowToast -> {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.editor_toast_message),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         },
         topBar = {

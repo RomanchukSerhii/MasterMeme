@@ -43,7 +43,7 @@ fun HomeBottomSheet(
                     style = MaterialTheme.typography.bodySmall
                 )
                 Spacer(Modifier.height(36.dp))
-                MemeVerticalGrid(
+                MemeBottomSheetVerticalGrid(
                     modifier = Modifier.padding(6.dp),
                     memes = MemeTemplateProvider.memesList,
                     onMemeClicked = { memeResId -> onEvent(HomeUiEvent.OnMemeClicked(memeResId)) }

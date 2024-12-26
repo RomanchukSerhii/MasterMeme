@@ -1,5 +1,6 @@
 package com.serhiiromanchuk.mastermeme.presentation.screens.home.components
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
@@ -15,11 +16,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import com.serhiiromanchuk.mastermeme.R
+import com.serhiiromanchuk.mastermeme.domain.entity.Meme
 
 @Composable
-fun MemeVerticalGrid(
+fun MemeBottomSheetVerticalGrid(
     modifier: Modifier = Modifier,
     memes: List<Int>,
     onMemeClicked: (memeResId: Int) -> Unit
@@ -48,6 +55,38 @@ fun MemeVerticalGrid(
                         onMemeClicked(memeResId)
                     },
 
+            )
+        }
+    }
+}
+
+@Composable
+fun MemeVerticalGrid(
+    modifier: Modifier = Modifier,
+    memeList: List<Meme>
+) {
+    val context = LocalContext.current
+
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(memeList, key = { it.id }) { meme ->
+            val memeUri = Uri.parse(meme.filePath)
+
+            AsyncImage(
+                modifier = Modifier
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(8.dp)),
+                model = ImageRequest.Builder(context)
+                    .data(memeUri)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                error = painterResource(R.drawable.ic_delete_edit)
             )
         }
     }

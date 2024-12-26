@@ -12,6 +12,7 @@ import com.serhiiromanchuk.mastermeme.presentation.core.components.MasterMemeFAB
 import com.serhiiromanchuk.mastermeme.presentation.core.components.MemeTopBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.components.EmptyHomeScreen
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.components.HomeBottomSheet
+import com.serhiiromanchuk.mastermeme.presentation.screens.home.components.MemeVerticalGrid
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiState
@@ -44,7 +45,10 @@ fun HomeScreenRoot(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { uiState ->
-        HomeScreen(uiState)
+        HomeScreen(
+            uiState = uiState,
+            onEvent = viewModel::onEvent
+        )
         HomeBottomSheet(
             openBottomSheet = uiState.bottomSheetOpened,
             onEvent = viewModel::onEvent
@@ -54,7 +58,12 @@ fun HomeScreenRoot(
 
 @Composable
 private fun HomeScreen(
-    uiState: HomeUiState
+    uiState: HomeUiState,
+    onEvent: (HomeUiEvent) -> Unit
 ) {
-    EmptyHomeScreen()
+    if (uiState.memes.isEmpty()) {
+        EmptyHomeScreen()
+    } else {
+        MemeVerticalGrid(memeList = uiState.memes)
+    }
 }

@@ -5,7 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Stable
 import com.serhiiromanchuk.mastermeme.presentation.core.base.common.UiState
 import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
-import com.serhiiromanchuk.mastermeme.presentation.core.utils.Constants
+import com.serhiiromanchuk.mastermeme.utils.Constants
 
 @Stable
 data class EditorUiState(

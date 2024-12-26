@@ -2,7 +2,7 @@ package com.serhiiromanchuk.mastermeme.presentation.core.state
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
-import com.serhiiromanchuk.mastermeme.presentation.core.utils.Constants
+import com.serhiiromanchuk.mastermeme.utils.Constants
 
 @Stable
 data class MemeTextState(
