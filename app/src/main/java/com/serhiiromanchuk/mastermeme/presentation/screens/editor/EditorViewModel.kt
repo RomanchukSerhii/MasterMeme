@@ -1,6 +1,8 @@
 package com.serhiiromanchuk.mastermeme.presentation.screens.editor
 
+import android.net.Uri
 import androidx.compose.ui.geometry.Offset
+import androidx.lifecycle.viewModelScope
 import com.serhiiromanchuk.mastermeme.domain.rejpository.MemeDbRepository
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseViewModel
 import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
@@ -32,6 +34,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 
 private typealias BaseEditorViewModel = BaseViewModel<EditorUiState, EditorUiEvent, EditorActionEvent>
 
@@ -53,7 +56,7 @@ class EditorViewModel @AssistedInject constructor(
             BottomBarModeChanged -> toggleBottomBarMode()
             BottomSheetDismissed -> updateBottomSheetState(false)
             SaveToDeviceClicked -> launch { savePictureToDevice() }
-            ShareMemeClicked -> TODO()
+            ShareMemeClicked -> launch { shareMeme() }
             is ShowLeaveDialog -> updateDialogVisibility { copy(showBasicDialog = event.isVisible) }
             is ShowEditTextDialog -> updateDialogVisibility { copy(showEditTextDialog = event.isVisible) }
             is FontSizeChanged -> updateFontSize(event.fontSize)
@@ -94,13 +97,31 @@ class EditorViewModel @AssistedInject constructor(
     }
 
     private suspend fun savePictureToDevice() {
-        val saveMemeJob = launch {
-            memeDbRepository.saveMeme(currentState.memePicture)
+        if (currentState.memeUriString.isEmpty()) {
+            val saveMemeJob = launch {
+                memeDbRepository.saveMeme(currentState.memePicture)
+            }
+            saveMemeJob.join()
         }
-        saveMemeJob.join()
         updateBottomSheetState(false)
         sendActionEvent(EditorActionEvent.ShowToast)
         sendActionEvent(EditorActionEvent.NavigationBack)
+    }
+
+    private suspend fun shareMeme() {
+        val memeUriString = currentState.memeUriString
+
+        val memeUri = if (memeUriString.isEmpty()) {
+            val saveMemeJob = viewModelScope.async {
+                memeDbRepository.saveMeme(currentState.memePicture)
+            }
+            val savedMemeUri = saveMemeJob.await()
+            updateState { it.copy(memeUriString = savedMemeUri.toString()) }
+            savedMemeUri
+        } else {
+            Uri.parse(memeUriString)
+        }
+        sendActionEvent(EditorActionEvent.ShareMeme(memeUri))
     }
 
     private fun updateDialogVisibility(update: EditorUiState.() -> EditorUiState) {

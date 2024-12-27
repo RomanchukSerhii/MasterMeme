@@ -1,6 +1,7 @@
 package com.serhiiromanchuk.mastermeme.data.repository
 
 import android.graphics.Picture
+import android.net.Uri
 import com.serhiiromanchuk.mastermeme.data.database.MemeDao
 import com.serhiiromanchuk.mastermeme.data.entity.MemeDb
 import com.serhiiromanchuk.mastermeme.data.mapper.toEntities
@@ -18,12 +19,13 @@ class MemeDbRepositoryImpl(
 ) : MemeDbRepository {
     override fun getAllMemes(): Flow<List<Meme>>  = memeDao.getAllMemes().map { it.toEntities() }
 
-    override suspend fun saveMeme(memePicture: Picture) {
+    override suspend fun saveMeme(memePicture: Picture): Uri {
         val bitmap = bitmapProcessor.createBitmapFromPicture(memePicture)
         val uri = bitmapProcessor.saveBitmapToDisk(bitmap)
         val filePath = uri.toString()
         val newMemeDb = MemeDb(id = Constants.INITIAL_MEME_ID, filePath = filePath)
         memeDao.upsertMeme(newMemeDb)
+        return uri
     }
 
     override suspend fun upsertMeme(meme: Meme) = memeDao.upsertMeme(meme.toMemeDb())

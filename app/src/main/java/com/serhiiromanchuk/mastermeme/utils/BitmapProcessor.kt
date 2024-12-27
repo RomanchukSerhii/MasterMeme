@@ -32,7 +32,7 @@ class BitmapProcessor(private val context: Context) {
     /**
       * Saves the Bitmap to disk and returns the URI of the saved file.
       */
-    fun saveBitmapToDisk(bitmap: Bitmap): Uri? {
+    fun saveBitmapToDisk(bitmap: Bitmap): Uri {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // Android 10+ (API 29+)
             saveImageToMediaStore(bitmap)
@@ -43,41 +43,44 @@ class BitmapProcessor(private val context: Context) {
     }
 
     // For Android 10+ (API 29+)
-    private fun saveImageToMediaStore(bitmap: Bitmap): Uri? {
+    private fun saveImageToMediaStore(bitmap: Bitmap): Uri {
         val contentValues = ContentValues().apply {
             put(MediaStore.Images.Media.DISPLAY_NAME, "new_meme-${System.currentTimeMillis()}.jpg")
-            put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+            put(MediaStore.Images.Media.MIME_TYPE, Constants.MIME_TYPE)
             put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
         }
 
         val resolver = context.contentResolver
         val uri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+            ?: throw IllegalStateException("Failed to create MediaStore entry")
 
-        uri?.let {
-            resolver.openOutputStream(it)?.use { outputStream ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
+        resolver.openOutputStream(uri)?.use { outputStream ->
+            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)) {
+                throw IllegalStateException("Failed to save image to MediaStore")
             }
-        }
+        } ?: throw IllegalStateException("Failed to open output stream for URI")
 
         return uri
     }
 
     // For Android 9 and below (API 28 and below)
-    private fun saveImageToExternalStorage(bitmap: Bitmap): Uri? {
+    private fun saveImageToExternalStorage(bitmap: Bitmap): Uri {
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
             "new_meme-${System.currentTimeMillis()}.jpg"
         )
 
         file.outputStream().use { out ->
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)
+            if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out)) {
+                throw IllegalStateException("Failed to save image to external storage")
+            }
         }
 
-        // Scan a file to add to the media library
+        // Оновити медіа-бібліотеку
         MediaScannerConnection.scanFile(
             context,
             arrayOf(file.absolutePath),
-            arrayOf("image/jpeg"),
+            arrayOf(Constants.MIME_TYPE),
             null
         )
 

@@ -13,6 +13,7 @@ data class EditorUiState(
     val editableTextState: MemeTextState = INITIAL_MEME_TEXT_STATE,
     val memeTextList: List<MemeTextState> = listOf(),
     val memePicture: Picture = Picture(),
+    val memeUriString: String = "",
     val showBasicDialog: Boolean = false,
     val showEditTextDialog: Boolean = false,
     val bottomBarEditMode: Boolean = true,

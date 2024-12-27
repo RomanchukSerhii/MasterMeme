@@ -1,5 +1,6 @@
 package com.serhiiromanchuk.mastermeme.presentation.screens.editor
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,10 +18,10 @@ import com.serhiiromanchuk.mastermeme.presentation.core.components.MemeTopBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditorBottomBar
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.EditorBottomSheet
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.components.MemeWithEditingText
-import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent.NavigationBack
-import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent.ShowToast
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent.*
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiState
+import com.serhiiromanchuk.mastermeme.utils.Constants
 
 @Composable
 fun EditorScreenRoot(
@@ -45,6 +46,15 @@ fun EditorScreenRoot(
                         context.getString(R.string.editor_toast_message),
                         Toast.LENGTH_SHORT
                     ).show()
+                }
+
+                is ShareMeme -> {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = Constants.MIME_TYPE
+                        putExtra(Intent.EXTRA_STREAM, actionEvent.memeUri)
+                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Share Meme"))
                 }
             }
         },

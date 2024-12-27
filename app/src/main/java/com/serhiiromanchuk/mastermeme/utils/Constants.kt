@@ -6,5 +6,5 @@ object Constants {
     const val UNDEFINED_MEME_RES_ID = -1
     const val UNDEFINED_MEME_TEXT_STATE_ID = -1
     const val MEME_DB = "meme_db"
-
+    const val MIME_TYPE = "image/jpeg"
 }

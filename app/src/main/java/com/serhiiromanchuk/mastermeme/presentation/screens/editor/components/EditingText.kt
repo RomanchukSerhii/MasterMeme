@@ -41,14 +41,11 @@ fun EditingText(
             modifier = modifier
                 .pointerInput(Unit) {
                     detectTapGestures(
-                        onDoubleTap = {
-                            if (memeTextState.isEditMode) {
-                                onEvent(EditorUiEvent.ShowEditTextDialog(true))
-                            }
-                        },
                         onTap = {
                             if (!memeTextState.isEditMode) {
                                 onEvent(EditorUiEvent.EditTextClicked(memeTextState.id))
+                            } else {
+                                onEvent(EditorUiEvent.ShowEditTextDialog(true))
                             }
                         }
                     )

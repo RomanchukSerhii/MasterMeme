@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -36,8 +35,8 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.serhiiromanchuk.mastermeme.R
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.StoragePermissionHandler
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
-import kotlinx.coroutines.launch
 
 @Composable
 fun EditorBottomSheet(
@@ -56,6 +55,7 @@ fun EditorBottomSheet(
                 listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
         )
+        val permissionHandler = remember { StoragePermissionHandler() }
 
         ModalBottomSheet(
             onDismissRequest = { onEvent(EditorUiEvent.BottomSheetDismissed) }
@@ -71,26 +71,12 @@ fun EditorBottomSheet(
                     title = stringResource(R.string.save_to_device),
                     subtitle = stringResource(R.string.save_meme_subtitle),
                     onClick = {
-                        when {
-                            writeStorageAccessState.allPermissionsGranted -> {
-                                onEvent(EditorUiEvent.SaveToDeviceClicked)
-                            }
-                            writeStorageAccessState.shouldShowRationale -> {
-                                coroutineScope.launch {
-                                val result = snackbarHostState.showSnackbar(
-                                    message = "The storage permission is needed to save the image",
-                                    actionLabel = "Grant Access"
-                                )
-
-                                if (result == SnackbarResult.ActionPerformed) {
-                                    writeStorageAccessState.launchMultiplePermissionRequest()
-                                }
-                            }
-                            }
-                            else -> {
-                                writeStorageAccessState.launchMultiplePermissionRequest()
-                            }
-                        }
+                        permissionHandler.handleWriteStoragePermissions(
+                            writeStorageAccessState = writeStorageAccessState,
+                            coroutineScope = coroutineScope,
+                            snackbarHostState = snackbarHostState,
+                            onPermissionGranted = { onEvent(EditorUiEvent.SaveToDeviceClicked) }
+                        )
                     }
                 )
 
@@ -101,7 +87,14 @@ fun EditorBottomSheet(
                     icon = painterResource(R.drawable.ic_share),
                     title = stringResource(R.string.share_the_meme),
                     subtitle = stringResource(R.string.share_meme_subtitle),
-                    onClick = { }
+                    onClick = {
+                        permissionHandler.handleWriteStoragePermissions(
+                            writeStorageAccessState = writeStorageAccessState,
+                            coroutineScope = coroutineScope,
+                            snackbarHostState = snackbarHostState,
+                            onPermissionGranted = { onEvent(EditorUiEvent.ShareMemeClicked) }
+                        )
+                    }
                 )
             }
         }
