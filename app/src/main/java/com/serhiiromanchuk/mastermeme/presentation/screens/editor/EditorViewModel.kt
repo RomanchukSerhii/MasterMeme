@@ -99,7 +99,10 @@ class EditorViewModel @AssistedInject constructor(
     private suspend fun savePictureToDevice() {
         if (currentState.memeUriString.isEmpty()) {
             val saveMemeJob = launch {
-                memeDbRepository.saveMeme(currentState.memePicture)
+                memeDbRepository.saveMemeToDisk(
+                    memePicture = currentState.memePicture,
+                    saveToDatabase = true
+                )
             }
             saveMemeJob.join()
         }
@@ -113,7 +116,10 @@ class EditorViewModel @AssistedInject constructor(
 
         val memeUri = if (memeUriString.isEmpty()) {
             val saveMemeJob = viewModelScope.async {
-                memeDbRepository.saveMeme(currentState.memePicture)
+                memeDbRepository.saveMemeToDisk(
+                    memePicture = currentState.memePicture,
+                    saveToDatabase = false
+                )
             }
             val savedMemeUri = saveMemeJob.await()
             updateState { it.copy(memeUriString = savedMemeUri.toString()) }

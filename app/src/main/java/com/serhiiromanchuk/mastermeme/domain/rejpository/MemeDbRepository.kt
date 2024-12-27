@@ -11,7 +11,7 @@ interface MemeDbRepository {
 
     suspend fun cleanUpInvalidMemes()
 
-    suspend fun saveMeme(memePicture: Picture): Uri
+    suspend fun saveMemeToDisk(memePicture: Picture, saveToDatabase: Boolean): Uri
 
     suspend fun upsertMeme(meme: Meme)
 

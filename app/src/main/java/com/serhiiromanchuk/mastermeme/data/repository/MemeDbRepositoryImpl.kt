@@ -40,12 +40,14 @@ class MemeDbRepositoryImpl(
         }
     }
 
-    override suspend fun saveMeme(memePicture: Picture): Uri {
+    override suspend fun saveMemeToDisk(memePicture: Picture, saveToDatabase: Boolean): Uri {
         val bitmap = bitmapProcessor.createBitmapFromPicture(memePicture)
         val uri = bitmapProcessor.saveBitmapToDisk(bitmap)
         val filePath = uri.toString()
-        val newMemeDb = MemeDb(id = Constants.INITIAL_MEME_ID, filePath = filePath)
-        memeDao.upsertMeme(newMemeDb)
+        if (saveToDatabase) {
+            val newMemeDb = MemeDb(id = Constants.INITIAL_MEME_ID, filePath = filePath)
+            memeDao.upsertMeme(newMemeDb)
+        }
         return uri
     }
 
