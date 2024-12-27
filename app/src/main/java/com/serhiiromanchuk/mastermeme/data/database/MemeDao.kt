@@ -12,6 +12,9 @@ interface MemeDao {
     @Query("SELECT * FROM memes")
     fun getAllMemes(): Flow<List<MemeDb>>
 
+    @Query("SELECT * FROM memes")
+    fun getAllMemesSync(): List<MemeDb>
+
     @Upsert
     suspend fun upsertMeme(memeDb: MemeDb)
 

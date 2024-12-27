@@ -9,6 +9,8 @@ interface MemeDbRepository {
 
     fun getAllMemes(): Flow<List<Meme>>
 
+    suspend fun cleanUpInvalidMemes()
+
     suspend fun saveMeme(memePicture: Picture): Uri
 
     suspend fun upsertMeme(meme: Meme)

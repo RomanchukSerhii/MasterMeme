@@ -19,6 +19,10 @@ class HomeViewModel @Inject constructor(
 
     init {
         launch {
+            val cleanUpJob = launch {
+                memeDbRepository.cleanUpInvalidMemes()
+            }
+            cleanUpJob.join()
             memeDbRepository.getAllMemes().collect { memes ->
                 updateState { it.copy(memes = memes) }
             }

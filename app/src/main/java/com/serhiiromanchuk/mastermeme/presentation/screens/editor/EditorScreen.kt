@@ -64,6 +64,7 @@ fun EditorScreenRoot(
                 onBackClick = { viewModel.onEvent(EditorUiEvent.ShowLeaveDialog(true)) }
             )
         },
+        onBackPressed = { viewModel.onEvent(EditorUiEvent.ShowLeaveDialog(true)) },
         bottomBar = { uiState ->
             EditorBottomBar(
                 onEvent = viewModel::onEvent,

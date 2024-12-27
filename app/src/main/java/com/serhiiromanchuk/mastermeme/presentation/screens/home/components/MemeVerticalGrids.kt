@@ -8,11 +8,13 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -34,7 +36,7 @@ fun MemeBottomSheetVerticalGrid(
     memes: List<Int>,
     onMemeClicked: (memeResId: Int) -> Unit
 ) {
-    Box {
+    Box() {
         LazyVerticalGrid(
             modifier = modifier,
             columns = GridCells.Fixed(2),
@@ -63,7 +65,10 @@ fun MemeBottomSheetVerticalGrid(
             }
         }
 
-        BoxFade(modifier = Modifier.height(82.dp))
+        BoxFade(
+            modifier = Modifier.height(82.dp),
+            fadeColor = MaterialTheme.colorScheme.surface
+        )
     }
 
 }
@@ -76,7 +81,7 @@ fun MemeVerticalGrid(
     val context = LocalContext.current
 
     Box(
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -101,6 +106,9 @@ fun MemeVerticalGrid(
             }
         }
 
-        BoxFade(modifier = Modifier.height(82.dp))
+        BoxFade(
+            modifier = Modifier.height(82.dp),
+            fadeColor = MaterialTheme.colorScheme.background
+        )
     }
 }

@@ -11,7 +11,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun BoxScope.BoxFade(modifier: Modifier = Modifier) {
+fun BoxScope.BoxFade(
+    fadeColor: Color,
+    modifier: Modifier = Modifier
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -19,7 +22,7 @@ fun BoxScope.BoxFade(modifier: Modifier = Modifier) {
             .drawBehind {
                 drawRect(
                     brush = Brush.verticalGradient(
-                        colors = listOf( Color.Transparent, Color(0xFF141218)),
+                        colors = listOf( Color.Transparent, fadeColor),
                         startY = 0f,
                         endY = size.height
                     )

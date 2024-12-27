@@ -1,5 +1,6 @@
 package com.serhiiromanchuk.mastermeme.di
 
+import android.content.ContentResolver
 import android.content.Context
 import androidx.room.Room
 import com.serhiiromanchuk.mastermeme.data.database.MemeDao
@@ -44,10 +45,19 @@ object AppProvidesModule {
     }
 
     @Provides
+    @Singleton
+    fun provideContentResolver(
+        @ApplicationContext context: Context
+    ): ContentResolver {
+        return context.contentResolver
+    }
+
+    @Provides
     fun provideMemeDbRepository(
         memeDao: MemeDao,
-        bitmapProcessor: BitmapProcessor
+        bitmapProcessor: BitmapProcessor,
+        contentResolver: ContentResolver
     ): MemeDbRepository {
-        return MemeDbRepositoryImpl(memeDao, bitmapProcessor)
+        return MemeDbRepositoryImpl(memeDao, bitmapProcessor, contentResolver)
     }
 }
