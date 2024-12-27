@@ -6,7 +6,9 @@ import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -24,6 +26,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.domain.entity.Meme
+import com.serhiiromanchuk.mastermeme.presentation.core.components.BoxFade
 
 @Composable
 fun MemeBottomSheetVerticalGrid(
@@ -31,33 +34,38 @@ fun MemeBottomSheetVerticalGrid(
     memes: List<Int>,
     onMemeClicked: (memeResId: Int) -> Unit
 ) {
-    LazyVerticalGrid(
-        modifier = modifier,
-        columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(memes, key = { it }) { memeResId ->
-            val interactionSource = remember {
-                MutableInteractionSource()
-            }
-            Image(
-                painter = painterResource(id = memeResId),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(8.dp))
-                    .clickable(
-                        interactionSource,
-                        LocalIndication.current
-                    ) {
-                        onMemeClicked(memeResId)
-                    },
+    Box {
+        LazyVerticalGrid(
+            modifier = modifier,
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(memes, key = { it }) { memeResId ->
+                val interactionSource = remember {
+                    MutableInteractionSource()
+                }
+                Image(
+                    painter = painterResource(id = memeResId),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable(
+                            interactionSource,
+                            LocalIndication.current
+                        ) {
+                            onMemeClicked(memeResId)
+                        },
 
-            )
+                    )
+            }
         }
+
+        BoxFade(modifier = Modifier.height(82.dp))
     }
+
 }
 
 @Composable
@@ -67,27 +75,32 @@ fun MemeVerticalGrid(
 ) {
     val context = LocalContext.current
 
-    LazyVerticalGrid(
-        modifier = modifier,
-        columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    Box(
+        modifier = modifier
     ) {
-        items(memeList, key = { it.id }) { meme ->
-            val memeUri = Uri.parse(meme.filePath)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(memeList, key = { it.id }) { meme ->
+                val memeUri = Uri.parse(meme.filePath)
 
-            AsyncImage(
-                modifier = Modifier
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(8.dp)),
-                model = ImageRequest.Builder(context)
-                    .data(memeUri)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                error = painterResource(R.drawable.ic_delete_edit)
-            )
+                AsyncImage(
+                    modifier = Modifier
+                        .aspectRatio(1f)
+                        .clip(RoundedCornerShape(8.dp)),
+                    model = ImageRequest.Builder(context)
+                        .data(memeUri)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    error = painterResource(R.drawable.ic_delete_edit)
+                )
+            }
         }
+
+        BoxFade(modifier = Modifier.height(82.dp))
     }
 }
