@@ -42,7 +42,7 @@ fun OutlinedText(
             text = text,
             modifier = Modifier
                 .semantics { invisibleToUser() },
-            color = Color.Black,
+            color = if(color == Color.Black) Color.White else Color.Black,
             letterSpacing = letterSpacing,
             textDecoration = null,
             style = textStyle.copy(

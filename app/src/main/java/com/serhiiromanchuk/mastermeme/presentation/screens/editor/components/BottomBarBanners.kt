@@ -111,26 +111,55 @@ private fun FontSizeText(
 fun ColorPickerBanner(
     modifier: Modifier = Modifier,
     colorList: List<Color> = FontColorProvider.colorList,
+    currentColor: Color,
+    onColorClicked: (color: Color) -> Unit
+) {
+    LazyRow(
+        modifier = modifier.padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(colorList) { color ->
+            FontColorBox(
+                color = color,
+                isSelected = currentColor == color,
+                onColorClicked = onColorClicked
+            )
+        }
+    }
+}
+
+@Composable
+private fun FontColorBox(
+    modifier: Modifier = Modifier,
+    color: Color,
+    isSelected: Boolean,
     onColorClicked: (color: Color) -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-
-    LazyRow(
-        modifier = modifier.padding(vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(28.dp)
-    ) {
-        items(colorList) { color ->
-            Box(
-                modifier = Modifier
-                    .background(color, CircleShape)
-                    .clickable(
-                        interactionSource,
-                        LocalIndication.current
-                    ) {
-                        onColorClicked(color)
-                    }
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(4.dp))
+            .clickable(
+                interactionSource,
+                LocalIndication.current
+            ) {
+                onColorClicked(color)
+            }
+            .background(
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.surfaceContainerHigh
+                } else MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(4.dp)
             )
-        }
+            .padding(6.dp)
+
+    ) {
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .background(color, CircleShape)
+
+        )
     }
 }
 

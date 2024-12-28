@@ -2,6 +2,7 @@ package com.serhiiromanchuk.mastermeme.presentation.screens.editor
 
 import android.net.Uri
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.viewModelScope
 import com.serhiiromanchuk.mastermeme.domain.rejpository.MemeDbRepository
@@ -67,9 +68,7 @@ class EditorViewModel @AssistedInject constructor(
             is ShowLeaveDialog -> updateDialogVisibility { copy(showBasicDialog = event.isVisible) }
             is ShowEditTextDialog -> updateDialogVisibility { copy(showEditTextDialog = event.isVisible) }
             is FontSizeChanged -> updateFontSize(event.fontSize)
-            is ColorPicked -> {
-
-            }
+            is ColorPicked -> updateTextColor(event.color)
             is FontFamilyPicked -> updateFontFamily(event.fontFamily)
             is ConfirmEditDialogClicked -> updateEditableText(event.text)
             ResetEditingClicked -> resetEditableText()
@@ -162,6 +161,14 @@ class EditorViewModel @AssistedInject constructor(
         updateState {
             it.copy(
                 editableTextState = it.editableTextState.copy(currentFontSize = fontSize)
+            )
+        }
+    }
+
+    private fun updateTextColor(color: Color) {
+        updateState {
+            it.copy(
+                editableTextState = it.editableTextState.copy(currentTextColor = color)
             )
         }
     }

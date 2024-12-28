@@ -66,7 +66,8 @@ fun EditingText(
                     },
                 text = memeTextState.text.trim().uppercase(),
                 fontSize = memeTextState.currentFontSize.sp,
-                fontFamily = memeTextState.currentFontFamily
+                fontFamily = memeTextState.currentFontFamily,
+                color = memeTextState.currentTextColor
             )
         }
     }

@@ -92,7 +92,10 @@ private fun EditModeBottomBar(
     ) {
         when (bottomBarState.bottomBarItem) {
             BottomBarState.BottomBarItem.ColorPicker ->
-                ColorPickerBanner(onColorClicked = { onEvent(EditorUiEvent.ColorPicked(it)) })
+                ColorPickerBanner(
+                    onColorClicked = { onEvent(EditorUiEvent.ColorPicked(it)) },
+                    currentColor = memeTextState.currentTextColor
+                )
 
             BottomBarState.BottomBarItem.FontFamily ->
                 FontFamilyBanner(
