@@ -22,4 +22,7 @@
     <string name="share_the_meme">Share the meme</string>
     <string name="share_meme_subtitle">Share your meme or open it in the other App</string>
     <string name="editor_toast_message">Your meme has been saved</string>
+    <string name="text_size_button">Text size button</string>
+    <string name="text_style_button">Text style button</string>
+    <string name="color_picker_button">Color picker button</string>
 </resources>

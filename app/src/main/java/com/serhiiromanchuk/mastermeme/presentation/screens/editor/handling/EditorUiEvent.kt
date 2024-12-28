@@ -15,8 +15,8 @@ sealed interface EditorUiEvent : UiEvent {
     data class ShowEditTextDialog(val isVisible: Boolean) : EditorUiEvent
     data class FontSizeChanged(val fontSize: Float) : EditorUiEvent
     data class ConfirmEditDialogClicked(val text: String) : EditorUiEvent
-    data class ResetEditingClicked(val memeId: Int) : EditorUiEvent
-    data class ApplyEditingClicked(val memeId: Int) : EditorUiEvent
+    data object ResetEditingClicked: EditorUiEvent
+    data object ApplyEditingClicked: EditorUiEvent
     data class EditTextClicked(val memeId: Int) : EditorUiEvent
     data class EditTextOffsetChanged(val offset: Offset) : EditorUiEvent
     data class DeleteEditTextClicked(val memeId: Int) : EditorUiEvent

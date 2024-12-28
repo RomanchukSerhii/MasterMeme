@@ -61,8 +61,8 @@ class EditorViewModel @AssistedInject constructor(
             is ShowEditTextDialog -> updateDialogVisibility { copy(showEditTextDialog = event.isVisible) }
             is FontSizeChanged -> updateFontSize(event.fontSize)
             is ConfirmEditDialogClicked -> updateEditableText(event.text)
-            is ResetEditingClicked -> resetEditableText()
-            is ApplyEditingClicked -> saveEditableText()
+            ResetEditingClicked -> resetEditableText()
+            ApplyEditingClicked -> saveEditableText()
             is EditTextClicked -> showEditableMemeTextState(getMemeTextState(event.memeId))
             is EditTextOffsetChanged -> updateEditableTextOffset(event.offset)
             is DeleteEditTextClicked -> deleteMemeText(event.memeId)

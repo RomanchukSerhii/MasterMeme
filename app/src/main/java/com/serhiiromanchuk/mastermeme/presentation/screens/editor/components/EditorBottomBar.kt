@@ -1,17 +1,20 @@
 package com.serhiiromanchuk.mastermeme.presentation.screens.editor.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.serhiiromanchuk.mastermeme.R
@@ -36,14 +39,7 @@ fun EditorBottomBar(
         contentAlignment = Alignment.CenterEnd
     ) {
         if (editMode) {
-            EditModeBottomBar(
-                fontSize = memeTextState.currentFontSize,
-                onValueChange = { fontSize ->
-                    onEvent(EditorUiEvent.FontSizeChanged(fontSize = fontSize))
-                },
-                onResetClicked = { onEvent(EditorUiEvent.ResetEditingClicked(memeTextState.id)) },
-                onApplyClicked = { onEvent(EditorUiEvent.ApplyEditingClicked(memeTextState.id)) }
-            )
+            EditModeBottomBar(onEvent = onEvent)
         } else {
             NormalModeBottomBar(
                 onAddTextClicked = { onEvent(EditorUiEvent.ShowEditTextDialog(true)) },
@@ -77,22 +73,64 @@ private fun NormalModeBottomBar(
 
 @Composable
 private fun EditModeBottomBar(
-    fontSize: Float,
-    onValueChange: (Float) -> Unit,
-    onResetClicked: () -> Unit,
-    onApplyClicked: () -> Unit
+    modifier: Modifier = Modifier,
+    onEvent: (EditorUiEvent) -> Unit
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        ResetIcon(onClick = onResetClicked)
-        Spacer(modifier = Modifier.width(12.dp))
-        ChangeFontSizeBanner(
-            modifier = Modifier.weight(1f),
-            startPosition = fontSize,
-            onValueChange = onValueChange
+        ResetIcon(onClick = { onEvent(EditorUiEvent.ResetEditingClicked) })
+        TextEditButtons(
+            onFontClicked = {},
+            onFontSizeClicked = {},
+            onColorClicked = {}
         )
-        Spacer(modifier = Modifier.width(12.dp))
-        ApplyIcon(onClick = onApplyClicked)
+        ApplyIcon(onClick = { onEvent(EditorUiEvent.ApplyEditingClicked) })
+    }
+}
+
+@Composable
+private fun TextEditButtons(
+    modifier: Modifier = Modifier,
+    onFontClicked: () -> Unit,
+    onFontSizeClicked: () -> Unit,
+    onColorClicked: () -> Unit,
+) {
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+
+        // FontButton
+        IconButton(
+            onClick = onFontClicked
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_text_style),
+                contentDescription = stringResource(R.string.text_style_button)
+            )
+        }
+
+        // FontSizeButton
+        IconButton(
+            onClick = onFontSizeClicked
+        ) {
+            Image(
+                painter = painterResource(R.drawable.ic_text_size),
+                contentDescription = stringResource(R.string.text_size_button)
+            )
+        }
+
+        // ColorPickerButton
+        IconButton(
+            onClick = onColorClicked
+        ) {
+            Image(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(R.drawable.ic_color_picker),
+                contentDescription = stringResource(R.string.color_picker_button)
+            )
+        }
     }
 }
