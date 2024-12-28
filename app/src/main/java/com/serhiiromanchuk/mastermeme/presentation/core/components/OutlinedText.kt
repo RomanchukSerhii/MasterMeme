@@ -10,21 +10,23 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.semantics.invisibleToUser
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import com.serhiiromanchuk.mastermeme.presentation.theme.Impact
 
 @ExperimentalComposeUiApi
 @Composable
 fun OutlinedText(
     text: String,
+    fontFamily: FontFamily,
     fontSize: TextUnit,
+    color: Color = Color.White,
     modifier: Modifier = Modifier,
 ) {
     val textStyle = TextStyle(
-        fontFamily = Impact,
+        fontFamily = fontFamily,
         fontSize = fontSize,
-        color = Color.White
+        color = color
     )
     val letterSpacing = TextUnit(0F, TextUnitType.Sp)
 

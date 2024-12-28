@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package com.serhiiromanchuk.mastermeme.presentation.screens.editor.components
 
 import androidx.compose.foundation.LocalIndication
@@ -6,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,13 +24,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.serhiiromanchuk.mastermeme.R
+import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedText
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.MemeFont
 import com.serhiiromanchuk.mastermeme.presentation.theme.Manrope
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,6 +124,33 @@ fun ChangeColorBanner(
                         onColorClicked(color)
                     }
             )
+        }
+    }
+}
+
+@Composable
+fun ChangeFontBanner(
+    modifier: Modifier = Modifier,
+    memeFontList: List<MemeFont>
+) {
+    LazyRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(memeFontList) { memeFont ->
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedText(
+                    text = stringResource(R.string.font_example),
+                    fontFamily = memeFont.fontFamily,
+                    fontSize = 28.sp
+                )
+                Text(
+                    text = memeFont.fontName,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
         }
     }
 }

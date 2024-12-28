@@ -1,6 +1,7 @@
 package com.serhiiromanchuk.mastermeme.presentation.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -36,6 +37,12 @@ val Impact = FontFamily(
 
 // Set of Material typography styles to start with
 val Typography = Typography(
+    labelMedium = TextStyle(
+        fontFamily = Manrope,
+        fontWeight = FontWeight.Normal,
+        fontSize = 10.sp,
+        color = Color.White
+    ),
     bodySmall = TextStyle(
         fontFamily = Manrope,
         fontWeight = FontWeight.Normal,
