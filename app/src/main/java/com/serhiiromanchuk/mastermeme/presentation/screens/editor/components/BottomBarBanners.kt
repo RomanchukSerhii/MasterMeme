@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -26,8 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
@@ -35,18 +39,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedText
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.FontColorProvider
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.FontProvider
 import com.serhiiromanchuk.mastermeme.presentation.core.utils.MemeFont
 import com.serhiiromanchuk.mastermeme.presentation.theme.Manrope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChangeFontSizeBanner(
+fun FontSizeBanner(
     modifier: Modifier = Modifier,
     startPosition: Float,
     onValueChange: (Float) -> Unit
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -102,15 +108,15 @@ private fun FontSizeText(
 }
 
 @Composable
-fun ChangeColorBanner(
+fun ColorPickerBanner(
     modifier: Modifier = Modifier,
-    colorList: List<Color>,
+    colorList: List<Color> = FontColorProvider.colorList,
     onColorClicked: (color: Color) -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
 
     LazyRow(
-        modifier = modifier,
+        modifier = modifier.padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(28.dp)
     ) {
         items(colorList) { color ->
@@ -129,28 +135,70 @@ fun ChangeColorBanner(
 }
 
 @Composable
-fun ChangeFontBanner(
+fun FontFamilyBanner(
     modifier: Modifier = Modifier,
-    memeFontList: List<MemeFont>
+    memeFontList: List<MemeFont> = FontProvider.fontList,
+    currentFont: FontFamily,
+    onFontClicked: (FontFamily) -> Unit
 ) {
     LazyRow(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = modifier.padding(vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.Bottom
     ) {
         items(memeFontList) { memeFont ->
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            FontFamilyBox(
+                fontFamily = memeFont.fontFamily,
+                fontName = memeFont.fontName,
+                isSelected = currentFont == memeFont.fontFamily,
+                onClicked = onFontClicked
+            )
+        }
+    }
+}
+
+@Composable
+private fun FontFamilyBox(
+    fontFamily: FontFamily,
+    fontName: String,
+    isSelected: Boolean,
+    onClicked: (FontFamily) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(
+                interactionSource,
+                LocalIndication.current
             ) {
-                OutlinedText(
-                    text = stringResource(R.string.font_example),
-                    fontFamily = memeFont.fontFamily,
-                    fontSize = 28.sp
-                )
-                Text(
-                    text = memeFont.fontName,
-                    style = MaterialTheme.typography.labelMedium
-                )
+                onClicked(fontFamily)
             }
+            .background(
+                color = if (isSelected) {
+                    MaterialTheme.colorScheme.surfaceContainerHigh
+                } else MaterialTheme.colorScheme.surface,
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = 8.dp)
+            .padding(top = 4.dp, bottom = 8.dp),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            OutlinedText(
+                text = stringResource(R.string.font_example),
+                fontFamily = fontFamily,
+                fontSize = 28.sp
+            )
+            Text(
+                text = fontName,
+                style = MaterialTheme.typography.labelMedium
+            )
         }
     }
 }

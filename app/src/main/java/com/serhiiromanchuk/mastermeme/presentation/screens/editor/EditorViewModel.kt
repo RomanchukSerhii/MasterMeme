@@ -2,15 +2,17 @@ package com.serhiiromanchuk.mastermeme.presentation.screens.editor
 
 import android.net.Uri
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.viewModelScope
 import com.serhiiromanchuk.mastermeme.domain.rejpository.MemeDbRepository
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseViewModel
-import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ApplyEditingClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.BottomBarModeChanged
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.BottomSheetDismissed
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ColorPicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ColorPickedItemClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ConfirmEditDialogClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.DeleteEditTextClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditTextClicked
@@ -18,7 +20,10 @@ import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.Edito
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditingBoxSizeDetermined
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditingIconHeightDetermined
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.EditingTextHeightDetermined
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.FontFamilyItemClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.FontFamilyPicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.FontSizeChanged
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.FontSizeItemClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.LeaveDialogConfirmClicked
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.MemeImageSizeDetermined
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.PictureSaved
@@ -30,6 +35,7 @@ import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.Edito
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ShowLeaveDialog
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiState
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.BottomBarState
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.utils.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -61,6 +67,10 @@ class EditorViewModel @AssistedInject constructor(
             is ShowLeaveDialog -> updateDialogVisibility { copy(showBasicDialog = event.isVisible) }
             is ShowEditTextDialog -> updateDialogVisibility { copy(showEditTextDialog = event.isVisible) }
             is FontSizeChanged -> updateFontSize(event.fontSize)
+            is ColorPicked -> {
+
+            }
+            is FontFamilyPicked -> updateFontFamily(event.fontFamily)
             is ConfirmEditDialogClicked -> updateEditableText(event.text)
             ResetEditingClicked -> resetEditableText()
             ApplyEditingClicked -> saveEditableText()
@@ -90,6 +100,16 @@ class EditorViewModel @AssistedInject constructor(
             }
 
             is PictureSaved -> updateState { it.copy(memePicture = event.memePicture) }
+            ColorPickedItemClicked -> updateBottomBarItem {
+                copy(bottomBarItem = BottomBarState.BottomBarItem.ColorPicker)
+            }
+            FontFamilyItemClicked -> updateBottomBarItem {
+                copy(bottomBarItem = BottomBarState.BottomBarItem.FontFamily)
+            }
+            FontSizeItemClicked -> updateBottomBarItem {
+                copy(bottomBarItem = BottomBarState.BottomBarItem.FontSize)
+            }
+
         }
     }
 
@@ -146,6 +166,14 @@ class EditorViewModel @AssistedInject constructor(
         }
     }
 
+    private fun updateFontFamily(fontFamily: FontFamily) {
+        updateState {
+            it.copy(
+                editableTextState = it.editableTextState.copy(currentFontFamily = fontFamily)
+            )
+        }
+    }
+
     private fun updateEditableText(text: String) {
         if (currentState.editableTextState.id < 0) {
             addNewEditableText(text)
@@ -158,6 +186,8 @@ class EditorViewModel @AssistedInject constructor(
         val updatedEditableTextState = currentState.editableTextState.let {
             it.copy(
                 currentFontSize = it.initialFontSize,
+                currentFontFamily = it.initialFontFamily,
+                currentTextColor = it.initialTextColor,
                 offset = it.initialOffset
             )
         }
@@ -183,6 +213,8 @@ class EditorViewModel @AssistedInject constructor(
             it.copy(
                 id = if (it.id < 0) 0 else it.id,
                 initialFontSize = it.currentFontSize,
+                initialFontFamily = it.currentFontFamily,
+                initialTextColor = it.currentTextColor,
                 initialOffset = it.offset
             )
         }
@@ -254,21 +286,23 @@ class EditorViewModel @AssistedInject constructor(
         }
     }
 
+    private fun updateBottomBarItem(update: BottomBarState.() -> BottomBarState) {
+        updateState {
+            it.copy(bottomBarState = currentState.bottomBarState.update())
+        }
+    }
+
     private fun updateBottomSheetState(openBottomSheet: Boolean) {
         updateState { it.copy(bottomSheetOpened = openBottomSheet) }
     }
 
     private fun updateBottomBarState(
         bottomBarEditMode: Boolean = true,
-        fontFamilyIconSelected: Boolean = false,
-        fontSizeIconSelected: Boolean = false,
-        colorPickerIconSelected: Boolean = false,
+        bottomBarItem: BottomBarState.BottomBarItem = BottomBarState.BottomBarItem.Initial
     ): BottomBarState {
         return BottomBarState(
             bottomBarEditMode = bottomBarEditMode,
-            fontFamilyIconSelected = fontFamilyIconSelected,
-            fontSizeIconSelected = fontSizeIconSelected,
-            colorPickerIconSelected = colorPickerIconSelected
+            bottomBarItem = bottomBarItem
         )
     }
 

@@ -65,7 +65,8 @@ fun EditingText(
                         onEvent(EditorUiEvent.EditingTextHeightDetermined(textHeight))
                     },
                 text = memeTextState.text.trim().uppercase(),
-                fontSize = memeTextState.currentFontSize.sp
+                fontSize = memeTextState.currentFontSize.sp,
+                fontFamily = memeTextState.currentFontFamily
             )
         }
     }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,11 +23,13 @@ import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedButto
 import com.serhiiromanchuk.mastermeme.presentation.core.components.PrimaryButton
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.BottomBarState
 
 @Composable
 fun EditorBottomBar(
     modifier: Modifier = Modifier,
     memeTextState: MemeTextState,
+    bottomBarState: BottomBarState,
     editMode: Boolean = false,
     onEvent: (EditorUiEvent) -> Unit
 ) {
@@ -34,12 +37,14 @@ fun EditorBottomBar(
         modifier = modifier
             .fillMaxWidth()
             .background(color = MaterialTheme.colorScheme.surface)
-            .height(72.dp)
-            .padding(horizontal = 16.dp),
-        contentAlignment = Alignment.CenterEnd
+            .padding(horizontal = 16.dp)
     ) {
         if (editMode) {
-            EditModeBottomBar(onEvent = onEvent)
+            EditModeBottomBar(
+                memeTextState = memeTextState,
+                bottomBarState = bottomBarState,
+                onEvent = onEvent
+            )
         } else {
             NormalModeBottomBar(
                 onAddTextClicked = { onEvent(EditorUiEvent.ShowEditTextDialog(true)) },
@@ -54,7 +59,11 @@ private fun NormalModeBottomBar(
     onAddTextClicked: () -> Unit,
     onSaveMemeClicked: () -> Unit
 ) {
-    Row {
+    Row(
+        modifier = Modifier.fillMaxWidth().height(72.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
+    ) {
         // AddTextButton
         OutlinedButton(
             modifier = Modifier.padding(end = 16.dp),
@@ -74,20 +83,46 @@ private fun NormalModeBottomBar(
 @Composable
 private fun EditModeBottomBar(
     modifier: Modifier = Modifier,
+    memeTextState: MemeTextState,
+    bottomBarState: BottomBarState,
     onEvent: (EditorUiEvent) -> Unit
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+    Column(
+        modifier = modifier.fillMaxWidth()
     ) {
-        ResetIcon(onClick = { onEvent(EditorUiEvent.ResetEditingClicked) })
-        TextEditButtons(
-            onFontClicked = {},
-            onFontSizeClicked = {},
-            onColorClicked = {}
-        )
-        ApplyIcon(onClick = { onEvent(EditorUiEvent.ApplyEditingClicked) })
+        when (bottomBarState.bottomBarItem) {
+            BottomBarState.BottomBarItem.ColorPicker ->
+                ColorPickerBanner(onColorClicked = { onEvent(EditorUiEvent.ColorPicked(it)) })
+
+            BottomBarState.BottomBarItem.FontFamily ->
+                FontFamilyBanner(
+                    onFontClicked = { onEvent(EditorUiEvent.FontFamilyPicked(it)) },
+                    currentFont = memeTextState.currentFontFamily
+                )
+
+            BottomBarState.BottomBarItem.FontSize ->
+                FontSizeBanner(
+                    startPosition = memeTextState.currentFontSize,
+                    onValueChange = { onEvent(EditorUiEvent.FontSizeChanged(it)) }
+                )
+
+            BottomBarState.BottomBarItem.Initial -> {}
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth().height(72.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ResetIcon(onClick = { onEvent(EditorUiEvent.ResetEditingClicked) })
+            TextEditButtons(
+                onFontClicked = { onEvent(EditorUiEvent.FontSizeItemClicked) },
+                onFontSizeClicked = { onEvent(EditorUiEvent.FontFamilyItemClicked) },
+                onColorClicked = { onEvent(EditorUiEvent.ColorPickedItemClicked) }
+            )
+            ApplyIcon(onClick = { onEvent(EditorUiEvent.ApplyEditingClicked) })
+        }
     }
+
 }
 
 @Composable

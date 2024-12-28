@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.serhiiromanchuk.mastermeme.navigaion.RootAppNavigation
 import com.serhiiromanchuk.mastermeme.navigaion.rememberNavigationState
+import com.serhiiromanchuk.mastermeme.presentation.theme.MasterMemeDarkBlack
 import com.serhiiromanchuk.mastermeme.presentation.theme.MasterMemeBlack
-import com.serhiiromanchuk.mastermeme.presentation.theme.MasterMemeLightBlack
 import com.serhiiromanchuk.mastermeme.presentation.theme.MasterMemeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,8 +27,8 @@ class MainActivity : ComponentActivity() {
 
         installSplashScreen()
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(MasterMemeLightBlack.toArgb()),
-            navigationBarStyle = SystemBarStyle.dark(MasterMemeBlack.toArgb())
+            statusBarStyle = SystemBarStyle.dark(MasterMemeBlack.toArgb()),
+            navigationBarStyle = SystemBarStyle.dark(MasterMemeDarkBlack.toArgb())
         )
 
         setContent {

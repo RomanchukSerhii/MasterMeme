@@ -10,8 +10,9 @@ import androidx.compose.ui.platform.LocalView
 
 private val DarkColorScheme = darkColorScheme(
     primary = MasterMemeLightPurple,
-    background = MasterMemeBlack,
-    surface = MasterMemeLightBlack,
+    background = MasterMemeDarkBlack,
+    surface = MasterMemeBlack,
+    surfaceContainerHigh = MasterMemeLightBlack,
     secondary = MasterMemeGray,
     outline = MasterMemeDarkGray,
     onPrimary = MasterMemeDarkPurple,

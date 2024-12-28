@@ -2,6 +2,9 @@ package com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.stat
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import com.serhiiromanchuk.mastermeme.presentation.theme.Impact
 import com.serhiiromanchuk.mastermeme.utils.Constants
 
 @Stable
@@ -16,6 +19,10 @@ data class MemeTextState(
     val initialOffset: Offset = Offset(0f, 0f),
     val initialFontSize: Float = Constants.INITIAL_MEME_FONT_SIZE,
     val currentFontSize: Float = Constants.INITIAL_MEME_FONT_SIZE,
+    val initialFontFamily: FontFamily = Impact,
+    val currentFontFamily: FontFamily = Impact,
+    val initialTextColor: Color = Color.White,
+    val currentTextColor: Color = Color.White
 ) {
     val middlePositionTextOffset = calculateMiddlePositionOffset()
     val editModeOffset = calculateEditModeOffset(isEditMode)

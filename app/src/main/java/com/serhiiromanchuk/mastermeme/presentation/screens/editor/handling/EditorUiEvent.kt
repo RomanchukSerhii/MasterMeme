@@ -2,6 +2,8 @@ package com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling
 
 import android.graphics.Picture
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
 import com.serhiiromanchuk.mastermeme.presentation.core.base.common.UiEvent
 
 sealed interface EditorUiEvent : UiEvent {
@@ -25,4 +27,9 @@ sealed interface EditorUiEvent : UiEvent {
     data class EditingTextHeightDetermined(val height: Float) : EditorUiEvent
     data class MemeImageSizeDetermined(val width: Float, val height: Float) : EditorUiEvent
     data class PictureSaved(val memePicture: Picture) : EditorUiEvent
+    data object FontFamilyItemClicked : EditorUiEvent
+    data object FontSizeItemClicked : EditorUiEvent
+    data object ColorPickedItemClicked : EditorUiEvent
+    data class ColorPicked(val color: Color) : EditorUiEvent
+    data class FontFamilyPicked(val fontFamily: FontFamily) : EditorUiEvent
 }
