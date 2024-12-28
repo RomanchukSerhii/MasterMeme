@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedText
-import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 
 @OptIn(ExperimentalComposeUiApi::class)

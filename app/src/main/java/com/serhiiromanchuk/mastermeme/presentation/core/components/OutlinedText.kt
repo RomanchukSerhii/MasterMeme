@@ -13,12 +13,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
+import com.serhiiromanchuk.mastermeme.presentation.theme.Impact
 
 @ExperimentalComposeUiApi
 @Composable
 fun OutlinedText(
     text: String,
-    fontFamily: FontFamily,
+    fontFamily: FontFamily = Impact,
     fontSize: TextUnit,
     color: Color = Color.White,
     modifier: Modifier = Modifier,

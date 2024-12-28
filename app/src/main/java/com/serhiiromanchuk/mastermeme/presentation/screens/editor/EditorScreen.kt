@@ -69,7 +69,7 @@ fun EditorScreenRoot(
             EditorBottomBar(
                 onEvent = viewModel::onEvent,
                 memeTextState = uiState.editableTextState,
-                editMode = uiState.bottomBarEditMode
+                editMode = uiState.bottomBarState.bottomBarEditMode
             )
         }
     ) { uiState ->

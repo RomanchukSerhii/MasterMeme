@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalFoundationApi::class)
+@file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
 
 package com.serhiiromanchuk.mastermeme.presentation.screens.editor.components
 
@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.drawscope.draw
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.round
-import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 
 @Composable

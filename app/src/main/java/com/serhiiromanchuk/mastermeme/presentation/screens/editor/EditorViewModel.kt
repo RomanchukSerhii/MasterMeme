@@ -5,7 +5,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.lifecycle.viewModelScope
 import com.serhiiromanchuk.mastermeme.domain.rejpository.MemeDbRepository
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseViewModel
-import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ApplyEditingClicked
@@ -29,6 +29,7 @@ import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.Edito
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ShowEditTextDialog
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent.ShowLeaveDialog
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiState
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.BottomBarState
 import com.serhiiromanchuk.mastermeme.utils.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -93,7 +94,10 @@ class EditorViewModel @AssistedInject constructor(
     }
 
     private fun toggleBottomBarMode() {
-        updateState { it.copy(bottomBarEditMode = !it.bottomBarEditMode) }
+        val updatedBottomBarState = updateBottomBarState(
+            bottomBarEditMode = !currentState.bottomBarState.bottomBarEditMode
+        )
+        updateState { it.copy(bottomBarState = updatedBottomBarState) }
     }
 
     private suspend fun savePictureToDevice() {
@@ -168,7 +172,7 @@ class EditorViewModel @AssistedInject constructor(
                         isVisible = false,
                         isEditMode = true
                     ),
-                    bottomBarEditMode = false
+                    bottomBarState = updateBottomBarState(bottomBarEditMode = false)
                 )
             }
         }
@@ -193,7 +197,7 @@ class EditorViewModel @AssistedInject constructor(
         updateState {
             it.copy(
                 memeTextList = updatedList,
-                bottomBarEditMode = true,
+                bottomBarState = updateBottomBarState(bottomBarEditMode = true),
                 editableTextState = textState.copy(
                     isEditMode = true,
                     offset = textState.editModeOffset
@@ -218,7 +222,7 @@ class EditorViewModel @AssistedInject constructor(
         updateState {
             it.copy(
                 memeTextList = updatedList,
-                bottomBarEditMode = false,
+                bottomBarState = updateBottomBarState(bottomBarEditMode = false),
                 editableTextState = MemeTextState()
             )
         }
@@ -254,6 +258,21 @@ class EditorViewModel @AssistedInject constructor(
         updateState { it.copy(bottomSheetOpened = openBottomSheet) }
     }
 
+    private fun updateBottomBarState(
+        bottomBarEditMode: Boolean = true,
+        fontFamilyIconSelected: Boolean = false,
+        fontSizeIconSelected: Boolean = false,
+        colorPickerIconSelected: Boolean = false,
+    ): BottomBarState {
+        return BottomBarState(
+            bottomBarEditMode = bottomBarEditMode,
+            fontFamilyIconSelected = fontFamilyIconSelected,
+            fontSizeIconSelected = fontSizeIconSelected,
+            colorPickerIconSelected = colorPickerIconSelected
+        )
+    }
+
+
     private fun addNewEditableText(text: String) {
         val newMemeId = if (currentState.memeTextList.isEmpty()) 0 else {
             currentState.memeTextList.last().id.plus(1)
@@ -285,7 +304,7 @@ class EditorViewModel @AssistedInject constructor(
         updateState {
             it.copy(
                 memeTextList = updatedList,
-                bottomBarEditMode = false,
+                bottomBarState = updateBottomBarState(bottomBarEditMode = false),
                 editableTextState = MemeTextState()
             )
         }
@@ -314,7 +333,7 @@ class EditorViewModel @AssistedInject constructor(
             it.copy(
                 editableTextState = editedMemeTextState,
                 showEditTextDialog = false,
-                bottomBarEditMode = true
+                bottomBarState = updateBottomBarState(bottomBarEditMode = true)
             )
         }
     }

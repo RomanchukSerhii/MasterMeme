@@ -35,6 +35,40 @@ val Impact = FontFamily(
     )
 )
 
+val ArchivoBlack = FontFamily(
+    Font(
+        resId = R.font.archivo_black,
+        weight = FontWeight.Normal
+    )
+)
+
+val BebasNeue = FontFamily(
+    Font(
+        resId = R.font.bebas_neue,
+        weight = FontWeight.Normal
+    )
+)
+
+val Lobster = FontFamily(
+    Font(
+        resId = R.font.lobster,
+        weight = FontWeight.Normal
+    )
+)
+
+val Oswald = FontFamily(
+    Font(
+        resId = R.font.oswald,
+        weight = FontWeight.Normal
+    )
+)
+
+val Rubik = FontFamily(
+    Font(
+        resId = R.font.rubik,
+        weight = FontWeight.Normal
+    )
+)
 // Set of Material typography styles to start with
 val Typography = Typography(
     labelMedium = TextStyle(

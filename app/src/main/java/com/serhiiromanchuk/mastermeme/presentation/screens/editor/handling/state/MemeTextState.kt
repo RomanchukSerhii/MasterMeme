@@ -1,4 +1,4 @@
-package com.serhiiromanchuk.mastermeme.presentation.core.state
+package com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state
 
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset

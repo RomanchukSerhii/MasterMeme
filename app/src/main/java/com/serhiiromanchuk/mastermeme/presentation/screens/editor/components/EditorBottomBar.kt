@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.serhiiromanchuk.mastermeme.R
 import com.serhiiromanchuk.mastermeme.presentation.core.components.OutlinedButton
 import com.serhiiromanchuk.mastermeme.presentation.core.components.PrimaryButton
-import com.serhiiromanchuk.mastermeme.presentation.core.state.MemeTextState
+import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.state.MemeTextState
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorUiEvent
 
 @Composable
