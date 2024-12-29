@@ -99,16 +99,9 @@ class EditorViewModel @AssistedInject constructor(
             }
 
             is PictureSaved -> updateState { it.copy(memePicture = event.memePicture) }
-            ColorPickedItemClicked -> updateBottomBarItem {
-                copy(bottomBarItem = BottomBarState.BottomBarItem.ColorPicker)
-            }
-            FontFamilyItemClicked -> updateBottomBarItem {
-                copy(bottomBarItem = BottomBarState.BottomBarItem.FontFamily)
-            }
-            FontSizeItemClicked -> updateBottomBarItem {
-                copy(bottomBarItem = BottomBarState.BottomBarItem.FontSize)
-            }
-
+            ColorPickedItemClicked -> updateBottomBarItem(BottomBarState.BottomBarItem.ColorPicker)
+            FontFamilyItemClicked -> updateBottomBarItem(BottomBarState.BottomBarItem.FontFamily)
+            FontSizeItemClicked -> updateBottomBarItem(BottomBarState.BottomBarItem.FontSize)
         }
     }
 
@@ -293,9 +286,20 @@ class EditorViewModel @AssistedInject constructor(
         }
     }
 
-    private fun updateBottomBarItem(update: BottomBarState.() -> BottomBarState) {
+//    private fun updateBottomBarItem(update: BottomBarState.() -> BottomBarState) {
+//        updateState {
+//            it.copy(bottomBarState = currentState.bottomBarState.update())
+//        }
+//    }
+
+    private fun updateBottomBarItem(bottomBarItem: BottomBarState.BottomBarItem) {
+        val updatedBottomBarItem = if (currentState.bottomBarState.bottomBarItem == bottomBarItem) {
+            BottomBarState.BottomBarItem.Initial
+        } else bottomBarItem
         updateState {
-            it.copy(bottomBarState = currentState.bottomBarState.update())
+            it.copy(
+                bottomBarState = currentState.bottomBarState.copy(bottomBarItem = updatedBottomBarItem)
+            )
         }
     }
 
