@@ -7,7 +7,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface MemeDbRepository {
 
-    fun getAllMemes(): Flow<List<Meme>>
+    fun getMemesFavouriteSorted(): Flow<List<Meme>>
+
+    fun getMemesDateSorted(): Flow<List<Meme>>
 
     suspend fun cleanUpInvalidMemes()
 

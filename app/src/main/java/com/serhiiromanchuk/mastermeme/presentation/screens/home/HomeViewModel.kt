@@ -23,7 +23,7 @@ class HomeViewModel @Inject constructor(
                 memeDbRepository.cleanUpInvalidMemes()
             }
             cleanUpJob.join()
-            memeDbRepository.getAllMemes().collect { memes ->
+            memeDbRepository.getMemesFavouriteSorted().collect { memes ->
                 updateState { it.copy(memes = memes) }
             }
         }
@@ -36,6 +36,17 @@ class HomeViewModel @Inject constructor(
             is HomeUiEvent.OnMemeClicked -> {
                 updateBottomSheetState(false)
                 sendActionEvent(HomeActionEvent.NavigateToEditor(event.memeResId))
+            }
+
+            is HomeUiEvent.MemeFavouriteToggled -> toggleFavouriteMeme(memeId = event.memeId)
+        }
+    }
+
+    private fun toggleFavouriteMeme(memeId: Int) {
+        val meme = currentState.memes.find { it.id == memeId }
+        meme?.let {
+            launch {
+                memeDbRepository.upsertMeme(meme.copy(isFavourite = !meme.isFavourite))
             }
         }
     }

@@ -9,8 +9,16 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface MemeDao {
 
-    @Query("SELECT * FROM memes")
-    fun getAllMemes(): Flow<List<MemeDb>>
+    @Query("""
+        SELECT * FROM memes
+        ORDER BY 
+            isFavourite DESC, 
+            CASE WHEN isFavourite = 1 THEN creationTimestamp END DESC
+    """)
+    fun getMemesFavouriteSorted(): Flow<List<MemeDb>>
+
+    @Query("SELECT * FROM memes ORDER BY creationTimestamp DESC")
+    fun getMemesDateSorted(): Flow<List<MemeDb>>
 
     @Query("SELECT * FROM memes")
     fun getAllMemesSync(): List<MemeDb>

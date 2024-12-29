@@ -24,7 +24,11 @@ class MemeDbRepositoryImpl(
     private val bitmapProcessor: BitmapProcessor,
     private val contentResolver: ContentResolver
 ) : MemeDbRepository {
-    override fun getAllMemes(): Flow<List<Meme>>  = memeDao.getAllMemes().map { it.toEntities() }
+    override fun getMemesFavouriteSorted(): Flow<List<Meme>> =
+        memeDao.getMemesFavouriteSorted().map { it.toEntities() }
+
+    override fun getMemesDateSorted(): Flow<List<Meme>> =
+        memeDao.getMemesDateSorted().map { it.toEntities() }
 
     override suspend fun cleanUpInvalidMemes() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -56,7 +60,8 @@ class MemeDbRepositoryImpl(
     override suspend fun deleteMeme(memeId: Int) = memeDao.deleteMeme(memeId)
 
     private fun getRealPathFromUri(uri: Uri): String? {
-        val cursor = contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
+        val cursor =
+            contentResolver.query(uri, arrayOf(MediaStore.Images.Media.DATA), null, null, null)
         cursor?.use {
             val columnIndex = it.getColumnIndex(MediaStore.Images.Media.DATA)
             if (columnIndex != -1 && it.moveToFirst()) {

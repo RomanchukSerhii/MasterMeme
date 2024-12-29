@@ -9,4 +9,6 @@ sealed interface HomeUiEvent : UiEvent {
     data object BottomSheetDismissed : HomeUiEvent
 
     data class OnMemeClicked(val memeResId: Int) : HomeUiEvent
+
+    data class MemeFavouriteToggled(val memeId: Int) : HomeUiEvent
 }

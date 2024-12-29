@@ -64,6 +64,9 @@ private fun HomeScreen(
     if (uiState.memes.isEmpty()) {
         EmptyHomeScreen()
     } else {
-        MemeVerticalGrid(memeList = uiState.memes)
+        MemeVerticalGrid(
+            memeList = uiState.memes,
+            onEvent = onEvent
+        )
     }
 }
