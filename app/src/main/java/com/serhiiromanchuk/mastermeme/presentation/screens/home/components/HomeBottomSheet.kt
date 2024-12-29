@@ -46,7 +46,7 @@ fun HomeBottomSheet(
                 MemeBottomSheetVerticalGrid(
                     modifier = Modifier.padding(6.dp),
                     memes = MemeTemplateProvider.memesList,
-                    onMemeClicked = { memeResId -> onEvent(HomeUiEvent.OnMemeClicked(memeResId)) }
+                    onMemeClicked = { memeResId -> onEvent(HomeUiEvent.MemeClicked(memeResId)) }
                 )
             }
         }

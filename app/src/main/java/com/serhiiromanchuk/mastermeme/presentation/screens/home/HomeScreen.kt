@@ -33,9 +33,11 @@ fun HomeScreenRoot(
                 is HomeActionEvent.NavigateToEditor -> navigationState.navigateToEditor(actionEvent.memeResId)
             }
         },
-        topBar = {
+        topBar = { uiState ->
             MemeTopBar(
-                title = stringResource(R.string.your_memes)
+                title = stringResource(R.string.your_memes),
+                selectedItem = uiState.selectedItem,
+                onSortOptionSelected = { viewModel.onEvent(HomeUiEvent.SortOptionClicked(it)) }
             )
         },
         floatingActionButton = {

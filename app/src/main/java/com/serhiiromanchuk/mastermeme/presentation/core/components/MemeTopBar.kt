@@ -16,12 +16,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.serhiiromanchuk.mastermeme.R
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.TopBarSortItem
+import com.serhiiromanchuk.mastermeme.presentation.screens.home.components.SortOptionsDropdown
 
 @Composable
 fun MemeTopBar(
     modifier: Modifier = Modifier,
     title: String,
-    onBackClick: (() -> Unit)? = null
+    onBackClick: (() -> Unit)? = null,
+    selectedItem: TopBarSortItem? = null,
+    onSortOptionSelected: ((TopBarSortItem) -> Unit)? = null
 ) {
     Surface(
         modifier = modifier.height(64.dp)
@@ -48,6 +52,14 @@ fun MemeTopBar(
                         contentDescription = stringResource(R.string.back_to_main_screen)
                     )
                 }
+            }
+
+            if (onSortOptionSelected != null && selectedItem != null) {
+                SortOptionsDropdown(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                    selectedItem = selectedItem,
+                    onSortOptionSelected = onSortOptionSelected
+                )
             }
         }
     }

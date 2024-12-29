@@ -1,6 +1,7 @@
 package com.serhiiromanchuk.mastermeme.presentation.screens.home.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.wrapContentSize
@@ -18,31 +19,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import com.serhiiromanchuk.mastermeme.R
+import androidx.compose.ui.unit.dp
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.TopBarSortItem
 
 @Composable
 internal fun SortOptionsDropdown(
-    selectedItemIndex: Int,
-    onSortOptionSelected: (index: Int) -> Unit
+    selectedItem: TopBarSortItem,
+    onSortOptionSelected: (TopBarSortItem) -> Unit,
+    modifier: Modifier
 ) {
     val menuItems = listOf(
-        stringResource(R.string.sort_favourites_first),
-        stringResource(R.string.sort_newest_first),
+        TopBarSortItem.Favourite,
+        TopBarSortItem.Newest
     )
 
     var expanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.wrapContentSize(Alignment.Center)
+        modifier = modifier.wrapContentSize(Alignment.Center)
     ) {
         Row(
             modifier = Modifier
-                .clickable { expanded = true }
+                .clickable { expanded = true },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = menuItems[selectedItemIndex],
-                color = MaterialTheme.colorScheme.primary
+                text = selectedItem.text,
+                style = MaterialTheme.typography.bodyMedium
             )
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
@@ -54,16 +58,16 @@ internal fun SortOptionsDropdown(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            menuItems.forEachIndexed { index, text ->
+            menuItems.forEach { sortItem ->
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = text,
-                            color = MaterialTheme.colorScheme.primary
+                            text = sortItem.text,
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     },
                     onClick = {
-                        onSortOptionSelected(index)
+                        onSortOptionSelected(sortItem)
                         expanded = false
                     }
                 )
