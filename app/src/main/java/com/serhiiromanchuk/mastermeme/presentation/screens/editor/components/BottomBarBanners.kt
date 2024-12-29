@@ -138,7 +138,7 @@ private fun FontColorBox(
     val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(4.dp))
+            .clip(RoundedCornerShape(8.dp))
             .clickable(
                 interactionSource,
                 LocalIndication.current

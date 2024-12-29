@@ -20,3 +20,5 @@ fun MemeDb.toMeme(): Meme = Meme(
 )
 
 fun List<MemeDb>.toEntities(): List<Meme> = map { it.toMeme() }
+
+fun List<Meme>.toEntitiesDb(): List<MemeDb> = map { it.toMemeDb() }

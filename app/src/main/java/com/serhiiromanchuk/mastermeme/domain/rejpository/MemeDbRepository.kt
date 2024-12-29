@@ -9,9 +9,13 @@ interface MemeDbRepository {
 
     fun getMemesFavouriteSorted(): Flow<List<Meme>>
 
-    fun getMemesDateSorted(): Flow<List<Meme>>
-
     suspend fun cleanUpInvalidMemes()
+
+    suspend fun updateMemes(memes: List<Meme>)
+
+    suspend fun deleteSelectedMemes()
+
+    suspend fun unselectedAllMemes()
 
     suspend fun saveMemeToDisk(memePicture: Picture, saveToDatabase: Boolean): Uri
 

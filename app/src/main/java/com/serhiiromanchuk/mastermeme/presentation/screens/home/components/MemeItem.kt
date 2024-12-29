@@ -1,8 +1,8 @@
 package com.serhiiromanchuk.mastermeme.presentation.screens.home.components
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
@@ -14,14 +14,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,22 +38,34 @@ import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiE
 fun MemeItem(
     modifier: Modifier = Modifier,
     meme: Meme,
-    onEvent: (HomeUiEvent) -> Unit,
-    editMode: Boolean = false
+    isSelectionMode: Boolean,
+    onEvent: (HomeUiEvent) -> Unit
 ) {
-    val interactionSource = remember {
-        MutableInteractionSource()
-    }
     val context = LocalContext.current
+    val haptic = LocalHapticFeedback.current
     val memeUri = Uri.parse(meme.filePath)
+
+    LaunchedEffect(isSelectionMode) {
+        Log.d("SelectionMode", "isSelectionMode: $isSelectionMode")
+    }
 
     Box(
         modifier = modifier
             .aspectRatio(1f)
             .clip(RoundedCornerShape(8.dp))
-            .pointerInput(Unit) {
+            .pointerInput(isSelectionMode, meme.isSelected) {
                 detectTapGestures(
-                    onLongPress = {}
+                    onLongPress = {
+                        if (!isSelectionMode) {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            onEvent(HomeUiEvent.MemeLongPressed(meme))
+                        }
+                    },
+                    onTap = {
+                        if (isSelectionMode) {
+                            onEvent(HomeUiEvent.MemeSelectionToggled(meme))
+                        }
+                    }
                 )
             },
     ) {
@@ -65,14 +79,13 @@ fun MemeItem(
             error = painterResource(R.drawable.ic_delete_edit)
         )
 
-        if (editMode) {
-            // SelectIcon
+        // SelectIcon
+        if (isSelectionMode) {
             IconButton(
-                onClick = {},
+                onClick = { onEvent(HomeUiEvent.MemeSelectionToggled(meme)) },
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
                 Icon(
-                    modifier = Modifier.size(20.dp),
                     painter = if (meme.isSelected) {
                         painterResource(R.drawable.ic_selected)
                     } else painterResource(R.drawable.ic_unselected),
@@ -83,16 +96,18 @@ fun MemeItem(
         }
 
         // FavouriteIcon
-        IconButton(
-            onClick = { onEvent(HomeUiEvent.MemeFavouriteToggled(meme.id)) },
-            modifier = Modifier.align(Alignment.BottomEnd)
-        ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = if (meme.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                contentDescription = stringResource(R.string.selected_checkbox),
-                tint = MaterialTheme.colorScheme.primary
-            )
+        if (!isSelectionMode) {
+            IconButton(
+                onClick = { onEvent(HomeUiEvent.MemeFavouriteToggled(meme.id)) },
+                modifier = Modifier.align(Alignment.BottomEnd)
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = if (meme.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = stringResource(R.string.selected_checkbox),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

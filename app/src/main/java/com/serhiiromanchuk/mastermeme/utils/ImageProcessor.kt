@@ -12,7 +12,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import java.io.File
 
-class BitmapProcessor(private val context: Context) {
+class ImageProcessor(private val context: Context) {
     /**
      * Creates a Bitmap based on a Picture.
      */
@@ -39,6 +39,29 @@ class BitmapProcessor(private val context: Context) {
         } else {
             // Android 9 and below (API 28 and below)
             saveImageToExternalStorage(bitmap)
+        }
+    }
+
+    /**
+     * Deletes the image from disk using the provided URI.
+     */
+    fun deleteImage(uri: Uri) {
+        // For Android 10+ (API 29 and above) via MediaStore
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val resolver = context.contentResolver
+            val rowsDeleted = resolver.delete(uri, null, null)
+            if (rowsDeleted == 0) {
+                throw IllegalStateException("Failed to delete image from MediaStore")
+            }
+        } else {
+            // For Android 9 and below (API 28 and below), a file with an updated interface is visible
+            val file = File(uri.path ?: throw IllegalArgumentException("Invalid URI path"))
+            if (!file.exists()) {
+                throw IllegalStateException("File does not exist")
+            }
+            if (!file.delete()) {
+                throw IllegalStateException("Failed to delete image from external storage")
+            }
         }
     }
 
@@ -76,7 +99,7 @@ class BitmapProcessor(private val context: Context) {
             }
         }
 
-        // Оновити медіа-бібліотеку
+        // Update media library
         MediaScannerConnection.scanFile(
             context,
             arrayOf(file.absolutePath),

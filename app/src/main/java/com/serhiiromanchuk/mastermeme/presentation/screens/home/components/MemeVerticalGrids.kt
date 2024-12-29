@@ -72,6 +72,7 @@ fun MemeBottomSheetVerticalGrid(
 fun MemeVerticalGrid(
     modifier: Modifier = Modifier,
     memeList: List<Meme>,
+    isSelectionMode: Boolean,
     onEvent: (HomeUiEvent) -> Unit
 ) {
     Box(
@@ -85,7 +86,8 @@ fun MemeVerticalGrid(
             items(memeList, key = { it.id }) { meme ->
                 MemeItem(
                     meme = meme,
-                    onEvent = onEvent
+                    onEvent = onEvent,
+                    isSelectionMode = isSelectionMode
                 )
             }
         }

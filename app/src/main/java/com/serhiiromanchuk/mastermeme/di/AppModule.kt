@@ -7,7 +7,7 @@ import com.serhiiromanchuk.mastermeme.data.database.MemeDao
 import com.serhiiromanchuk.mastermeme.data.database.MemeDatabase
 import com.serhiiromanchuk.mastermeme.data.repository.MemeDbRepositoryImpl
 import com.serhiiromanchuk.mastermeme.domain.rejpository.MemeDbRepository
-import com.serhiiromanchuk.mastermeme.utils.BitmapProcessor
+import com.serhiiromanchuk.mastermeme.utils.ImageProcessor
 import com.serhiiromanchuk.mastermeme.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -40,8 +40,8 @@ object AppProvidesModule {
     @Singleton
     fun provideBitmapProcessor(
         @ApplicationContext context: Context
-    ): BitmapProcessor {
-        return BitmapProcessor(context)
+    ): ImageProcessor {
+        return ImageProcessor(context)
     }
 
     @Provides
@@ -55,9 +55,9 @@ object AppProvidesModule {
     @Provides
     fun provideMemeDbRepository(
         memeDao: MemeDao,
-        bitmapProcessor: BitmapProcessor,
+        imageProcessor: ImageProcessor,
         contentResolver: ContentResolver
     ): MemeDbRepository {
-        return MemeDbRepositoryImpl(memeDao, bitmapProcessor, contentResolver)
+        return MemeDbRepositoryImpl(memeDao, imageProcessor, contentResolver)
     }
 }

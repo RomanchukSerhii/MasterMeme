@@ -20,17 +20,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.serhiiromanchuk.mastermeme.presentation.core.utils.TopBarSortItem
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.DropdownSortItem
 
 @Composable
 internal fun SortOptionsDropdown(
-    selectedItem: TopBarSortItem,
-    onSortOptionSelected: (TopBarSortItem) -> Unit,
+    selectedItem: DropdownSortItem,
+    onSortOptionSelected: (DropdownSortItem) -> Unit,
     modifier: Modifier
 ) {
     val menuItems = listOf(
-        TopBarSortItem.Favourite,
-        TopBarSortItem.Newest
+        DropdownSortItem.Favourite,
+        DropdownSortItem.Newest
     )
 
     var expanded by remember { mutableStateOf(false) }

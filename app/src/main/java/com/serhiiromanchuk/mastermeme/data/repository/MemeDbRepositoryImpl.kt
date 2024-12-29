@@ -6,11 +6,12 @@ import android.net.Uri
 import android.provider.MediaStore
 import com.serhiiromanchuk.mastermeme.data.database.MemeDao
 import com.serhiiromanchuk.mastermeme.data.entity.MemeDb
+import com.serhiiromanchuk.mastermeme.data.mapper.toEntitiesDb
 import com.serhiiromanchuk.mastermeme.data.mapper.toEntities
 import com.serhiiromanchuk.mastermeme.data.mapper.toMemeDb
 import com.serhiiromanchuk.mastermeme.domain.entity.Meme
 import com.serhiiromanchuk.mastermeme.domain.rejpository.MemeDbRepository
-import com.serhiiromanchuk.mastermeme.utils.BitmapProcessor
+import com.serhiiromanchuk.mastermeme.utils.ImageProcessor
 import com.serhiiromanchuk.mastermeme.utils.Constants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,14 +22,11 @@ import java.io.File
 
 class MemeDbRepositoryImpl(
     private val memeDao: MemeDao,
-    private val bitmapProcessor: BitmapProcessor,
+    private val imageProcessor: ImageProcessor,
     private val contentResolver: ContentResolver
 ) : MemeDbRepository {
     override fun getMemesFavouriteSorted(): Flow<List<Meme>> =
         memeDao.getMemesFavouriteSorted().map { it.toEntities() }
-
-    override fun getMemesDateSorted(): Flow<List<Meme>> =
-        memeDao.getMemesDateSorted().map { it.toEntities() }
 
     override suspend fun cleanUpInvalidMemes() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -44,9 +42,31 @@ class MemeDbRepositoryImpl(
         }
     }
 
+    override suspend fun updateMemes(memes: List<Meme>) = memeDao.updateMemes(memes.toEntitiesDb())
+
+    override suspend fun deleteSelectedMemes() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val memes = memeDao.getAllMemesSync()
+            val updatedMemes = memes.filter { it.isSelected }
+            updatedMemes.forEach { memeDb ->
+                val uri = Uri.parse(memeDb.filePath)
+                imageProcessor.deleteImage(uri)
+            }
+        }
+        memeDao.deleteSelectedMemes()
+    }
+
+    override suspend fun unselectedAllMemes() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val memes = memeDao.getAllMemesSync()
+            val updatedMemes = memes.map { it.copy(isSelected = false) }
+            updateMemes(updatedMemes.toEntities())
+        }
+    }
+
     override suspend fun saveMemeToDisk(memePicture: Picture, saveToDatabase: Boolean): Uri {
-        val bitmap = bitmapProcessor.createBitmapFromPicture(memePicture)
-        val uri = bitmapProcessor.saveBitmapToDisk(bitmap)
+        val bitmap = imageProcessor.createBitmapFromPicture(memePicture)
+        val uri = imageProcessor.saveBitmapToDisk(bitmap)
         val filePath = uri.toString()
         if (saveToDatabase) {
             val newMemeDb = MemeDb(id = Constants.INITIAL_MEME_ID, filePath = filePath)

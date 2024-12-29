@@ -29,4 +29,9 @@
     <string name="selected_checkbox">Selected checkbox</string>
     <string name="sort_favourites_first">Favourites first</string>
     <string name="sort_newest_first">Newest first</string>
+    <string name="clear_icon_description">Exit the selection mode</string>
+    <string name="share_icon_description">Share all selected memes</string>
+    <string name="delete_dialog_headline">Delete %1$s memes?</string>
+    <string name="delete_dialog_supporting_text">You will not be able to restore them. If you\'re fine with that, press \'Delete</string>
+    <string name="delete">Delete</string>
 </resources>
