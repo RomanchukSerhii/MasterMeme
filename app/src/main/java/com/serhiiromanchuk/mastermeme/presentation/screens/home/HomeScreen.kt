@@ -75,7 +75,7 @@ fun HomeScreenRoot(
             onEvent = viewModel::onEvent
         )
         HomeBottomSheet(
-            openBottomSheet = uiState.bottomSheetOpened,
+            uiSheetState = uiState.bottomSheetState,
             onEvent = viewModel::onEvent
         )
         if (uiState.showDeleteDialog) {

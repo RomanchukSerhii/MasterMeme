@@ -23,12 +23,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.serhiiromanchuk.mastermeme.domain.entity.Meme
 import com.serhiiromanchuk.mastermeme.presentation.core.components.BoxFade
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.MemeTemplate
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent
 
 @Composable
 fun MemeBottomSheetVerticalGrid(
     modifier: Modifier = Modifier,
-    memes: List<Int>,
+    memes: List<MemeTemplate>,
     onMemeClicked: (memeResId: Int) -> Unit
 ) {
     Box {
@@ -38,12 +39,12 @@ fun MemeBottomSheetVerticalGrid(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(memes, key = { it }) { memeResId ->
+            items(memes, key = { it.resource }) { memeTemplate ->
                 val interactionSource = remember {
                     MutableInteractionSource()
                 }
                 Image(
-                    painter = painterResource(id = memeResId),
+                    painter = painterResource(id = memeTemplate.resource),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -53,7 +54,7 @@ fun MemeBottomSheetVerticalGrid(
                             interactionSource,
                             LocalIndication.current
                         ) {
-                            onMemeClicked(memeResId)
+                            onMemeClicked(memeTemplate.resource)
                         },
 
                     )

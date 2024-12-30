@@ -5,6 +5,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.viewModelScope
+import com.serhiiromanchuk.mastermeme.domain.entity.Meme
 import com.serhiiromanchuk.mastermeme.domain.rejpository.MemeDbRepository
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseViewModel
 import com.serhiiromanchuk.mastermeme.presentation.screens.editor.handling.EditorActionEvent
@@ -121,6 +122,8 @@ class EditorViewModel @AssistedInject constructor(
                 )
             }
             saveMemeJob.join()
+        } else {
+            memeDbRepository.upsertMeme(Meme(filePath = currentState.memeUriString))
         }
         updateBottomSheetState(false)
         sendActionEvent(EditorActionEvent.ShowToast)
@@ -285,12 +288,6 @@ class EditorViewModel @AssistedInject constructor(
             it.copy(editableTextState = it.editableTextState.copy(dimensions = dimensions))
         }
     }
-
-//    private fun updateBottomBarItem(update: BottomBarState.() -> BottomBarState) {
-//        updateState {
-//            it.copy(bottomBarState = currentState.bottomBarState.update())
-//        }
-//    }
 
     private fun updateBottomBarItem(bottomBarItem: BottomBarState.BottomBarItem) {
         val updatedBottomBarItem = if (currentState.bottomBarState.bottomBarItem == bottomBarItem) {

@@ -34,4 +34,11 @@
     <string name="delete_dialog_headline">Delete %1$s memes?</string>
     <string name="delete_dialog_supporting_text">You will not be able to restore them. If you\'re fine with that, press \'Delete</string>
     <string name="delete">Delete</string>
+    <string name="search_meme_template">Search meme template</string>
+    <string name="back_from_search_template">Back from search template</string>
+    <string name="search_input">Search input</string>
+    <string name="clear_text_button">Clear text button</string>
+    <string name="no_memes_found">No memes found:(</string>
+    <string name="one_template">1 template</string>
+    <string name="templates">%1$s templates</string>
 </resources>

@@ -16,6 +16,8 @@ sealed interface HomeUiEvent : UiEvent {
 
     data object ShareIconClicked : HomeUiEvent
 
+    data object SearchModeToggled : HomeUiEvent
+
     data class MemeClicked(val memeResId: Int) : HomeUiEvent
 
     data class MemeFavouriteToggled(val memeId: Int) : HomeUiEvent
@@ -27,4 +29,6 @@ sealed interface HomeUiEvent : UiEvent {
     data class MemeSelectionToggled(val meme: Meme) : HomeUiEvent
 
     data class ShowDeleteDialog(val isVisible: Boolean) : HomeUiEvent
+
+    data class SearchedTextChanged(val text: String) : HomeUiEvent
 }

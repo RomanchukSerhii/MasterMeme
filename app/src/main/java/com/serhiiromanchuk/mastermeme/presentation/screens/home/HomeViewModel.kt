@@ -5,19 +5,10 @@ import com.serhiiromanchuk.mastermeme.domain.entity.Meme
 import com.serhiiromanchuk.mastermeme.domain.rejpository.MemeDbRepository
 import com.serhiiromanchuk.mastermeme.presentation.core.base.BaseViewModel
 import com.serhiiromanchuk.mastermeme.presentation.core.utils.DropdownSortItem
+import com.serhiiromanchuk.mastermeme.presentation.core.utils.MemeTemplateProvider
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeActionEvent
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.BottomSheetDismissed
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.DeleteDialogConfirmed
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.FabClicked
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.MemeClicked
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.MemeFavouriteToggled
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.MemeLongPressed
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.MemeSelectionToggled
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.SelectionModeToggled
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.ShareIconClicked
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.ShowDeleteDialog
-import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.SortOptionClicked
+import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiEvent.*
 import com.serhiiromanchuk.mastermeme.presentation.screens.home.handling.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -66,6 +57,7 @@ class HomeViewModel @Inject constructor(
             SelectionModeToggled -> launch { toggleSelectionMode() }
             DeleteDialogConfirmed -> launch { deleteMemes() }
             ShareIconClicked -> shareSelectedMemes()
+            SearchModeToggled -> updateSearchMode()
             is MemeFavouriteToggled -> toggleFavouriteMeme(memeId = event.memeId)
             is SortOptionClicked -> updateTopBarSelectedItem(event.sortItem)
             is MemeClicked -> {
@@ -76,7 +68,19 @@ class HomeViewModel @Inject constructor(
             is MemeLongPressed -> launch { toggleSelectionMode(event.selectedMeme) }
             is MemeSelectionToggled -> toggleSelectedMeme(event.meme)
             is ShowDeleteDialog -> showDeleteDialog(event.isVisible)
+            is SearchedTextChanged -> changeSearchText(event.text)
+        }
+    }
 
+    private fun changeSearchText(text: String) {
+        val updatedMemeTemplates = MemeTemplateProvider.filterMemesByName(text)
+        updateState {
+            it.copy(
+                bottomSheetState = currentState.bottomSheetState.copy(
+                    memeTemplates = updatedMemeTemplates,
+                    searchText = text
+                )
+            )
         }
     }
 
@@ -110,7 +114,13 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun updateBottomSheetState(openBottomSheet: Boolean) {
-        updateState { it.copy(bottomSheetOpened = openBottomSheet) }
+        val updatedBottomSheetState = if (openBottomSheet) {
+            currentState.bottomSheetState.copy(isOpened = true)
+        } else {
+            HomeUiState.BottomSheetState()
+        }
+
+        updateState { it.copy(bottomSheetState = updatedBottomSheetState) }
     }
 
     private fun updateTopBarSelectedItem(selectedItem: DropdownSortItem) {
@@ -136,6 +146,16 @@ class HomeViewModel @Inject constructor(
 
     private fun updateSelectionMode() {
         updateState { it.copy(isSelectionMode = !currentState.isSelectionMode) }
+    }
+
+    private fun updateSearchMode() {
+        updateState {
+            it.copy(
+                bottomSheetState = currentState.bottomSheetState.copy(
+                    isSearchMode = !currentState.bottomSheetState.isSearchMode
+                )
+            )
+        }
     }
 
     private fun toggleSelectedMeme(meme: Meme): Job {
